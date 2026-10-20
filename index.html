@@ -8,7 +8,77 @@
     <link rel="icon" type="image/png" href="https://i.postimg.cc/MGJgF2VH/foto.png">
 <link rel="apple-touch-icon" href="https://i.postimg.cc/MGJgF2VH/foto.png">
     <style>
-        body {
+                /* SCHERMATA DI APERTURA ANIMATA */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #0c0c0c;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out, visibility 0.5s;
+        }
+        .loader-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 102, 178, 0.2);
+            border-top: 5px solid #ff66b2; /* Rosa coordinato */
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        .loader-text {
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 16px;
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        body         /* SCHERMATA DI APERTURA ANIMATA */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #0c0c0c;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out, visibility 0.5s;
+        }
+        .loader-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 102, 178, 0.2);
+            border-top: 5px solid #ff66b2; /* Rosa coordinato */
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        .loader-text {
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 16px;
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        {
             background-image: url('https://i.postimg.cc/J0fZ3W24/Background-2.png');
             background-size: cover;
             background-position: center;
@@ -95,6 +165,41 @@
     <div id="shortcut-banner" style="display: none;"></div>
 
     <script>
+                /* SCHERMATA DI APERTURA ANIMATA */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #0c0c0c;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out, visibility 0.5s;
+        }
+        .loader-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 102, 178, 0.2);
+            border-top: 5px solid #ff66b2; /* Rosa coordinato */
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        .loader-text {
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 16px;
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
         // Sistema di rilevamento automatico del telefono/PC
         window.addEventListener('DOMContentLoaded', () => {
             const banner = document.getElementById('shortcut-banner');
