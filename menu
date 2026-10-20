@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuova Sezione - Omnia</title>
+    <link href="https://i.postimg.cc/MGJgF2VH/foto.png" rel="icon" type="image/png">
+    <link rel="apple-touch-icon">
+    <style>
+        /* Mantiene lo stile coerente con la tua app */
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+
+        a.card {
+            display: block;
+            background: white;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 15px;
+            text-decoration: none;
+            color: inherit;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        a.card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            margin: 0 0 5px 0;
+            font-size: 1.2rem;
+            color: #007aff;
+        }
+
+        p {
+            margin: 0;
+            font-size: 0.95rem;
+            color: #666;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 20px;
+            text-decoration: none;
+            color: #007aff;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <a href="index.html" class="back-btn">← Torna indietro</a>
+
+    <h1>Nuova Sezione</h1>
+
+    <!-- Bottoni / Link esterni -->
+    <a href="https://LINK_1_QUI" class="card" target="_blank">
+        <h2>Primo Link</h2>
+        <p>Descrizione del primo link o risorsa.</p>
+    </a>
+
+    <a href="https://LINK_2_QUI" class="card" target="_blank">
+        <h2>Secondo Link</h2>
+        <p>Descrizione del secondo link o risorsa.</p>
+    </a>
+
+    <a href="https://LINK_3_QUI" class="card" target="_blank">
+        <h2>Terzo Link</h2>
+        <p>Descrizione del terzo link o risorsa.</p>
+    </a>
+
+</body>
+</html>
