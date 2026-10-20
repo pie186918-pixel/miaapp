@@ -113,6 +113,37 @@
                 banner.style.display = 'block';
             }
         });
+        // LOGICA SEGRETA: 5 CLICK SULLA SCRITTA OMNIA -> PASSWORD ADMIN
+        let clickCount = 0;
+        // Seleziona il titolo principale dell'applicazione (l'elemento h1 con scritto Omnia)
+        const titleTrigger = document.querySelector('h1');
+
+        if (titleTrigger) {
+            // Rende la scritta cliccabile e impedisce che venga selezionato il testo per errore durante i click veloci
+            titleTrigger.style.cursor = 'pointer';
+            titleTrigger.style.userSelect = 'none';
+            titleTrigger.style.webkitUserSelect = 'none';
+            
+            titleTrigger.addEventListener('click', () => {
+                clickCount++;
+                if (clickCount === 5) {
+                    clickCount = 0; // Resetta il contatore
+                    
+                    // Fa comparire la finestrella nativa del telefono per chiedere la password
+                    const passwordInput = prompt("🔒 ACCESSO ADMIN\nInserisci la password di amministrazione per accedere al reparto segreto:");
+                    
+                    // Controlla se la password è corretta (puoi cambiare "omnia123" con la tua password preferita)
+                    if (passwordInput === "omnia123") {
+                        alert("✅ Password corretta. Reindirizzamento in corso...");
+                        // Ti manda direttamente al tuo sito segreto (SOSTITUISCI IL LINK QUI SOTTO)
+                        window.location.href = "INSERISCI_QUI_IL_LINK_DEL_SITO_SEGRETO";
+                    } else if (passwordInput !== null) {
+                        alert("❌ Password errata. Accesso negato.");
+                    }
+                }
+            });
+        }
+    
     </script>
 </body>
 </html>
