@@ -56,6 +56,24 @@
             color: #b3b3b3;
             line-height: 1.4;
         }
+        /* Stile del Banner di Aiuto per le Scorciatoie */
+        #shortcut-banner {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #ff66b2;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            text-align: center;
+            z-index: 1000;
+            width: 90%;
+            max-width: 320px;
+        }        
     </style>
 </head>
 <body>
@@ -73,6 +91,28 @@
         <h2>Stampe 3D</h2>
         <p>Qui si possono trovare tutte le stampe stampate, preferite o future divise in argomenti.</p>
     </a>
+    <!-- Banner che compare dinamicamente -->
+    <div id="shortcut-banner" style="display: none;"></div>
 
+    <script>
+        // Sistema di rilevamento automatico del telefono/PC
+        window.addEventListener('DOMContentLoaded', () => {
+            const banner = document.getElementById('shortcut-banner');
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+            const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+            // Se l'utente usa un dispositivo Apple (iPhone/Mac) o il browser Safari
+            if (isIOS || isSafari || isMac) {
+                banner.innerHTML = "📲 Su Safari: Premi <b>Condividi</b> (🗂️) e poi <b>Aggiungi alla schermata Home</b>";
+                banner.style.display = 'block';
+            } 
+            // Se l'utente usa un dispositivo Android o Windows (Chrome/Edge)
+            else {
+                banner.innerHTML = "📲 Su Android/Chrome: Premi i <b>3 puntini</b> (⋮) e seleziona <b>Crea scorciatoia</b>";
+                banner.style.display = 'block';
+            }
+        });
+    </script>
 </body>
 </html>
