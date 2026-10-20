@@ -4,54 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Omnia</title>
-    
-    <!-- Icone per la schermata del telefono -->
-    <link rel="icon" type="image/png" href="https://postimg.cc">
-    <link rel="apple-touch-icon" href="https://postimg.cc">
-    
+    <!-- Icona per iPhone -->
+    <link rel="icon" type="image/png" href="https://i.postimg.cc/MGJgF2VH/foto.png">
+<link rel="apple-touch-icon" href="https://i.postimg.cc/MGJgF2VH/foto.png">
     <style>
-        /* SCHERMATA DI APERTURA ANIMATA */
-        #splash-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-color: #0c0c0c;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            transition: opacity 0.5s ease-out, visibility 0.5s;
-        }
-        .loader-spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid rgba(255, 102, 178, 0.2);
-            border-top: 5px solid #ff66b2; /* Rosa coordinato */
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 20px;
-        }
-        .loader-text {
-            color: #ffffff;
-            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-            font-size: 16px;
-            letter-spacing: 1px;
-            font-weight: 500;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* STILE DELL'APPLICAZIONE PRINCIPALE */
         body {
-            background-image: url('https://postimg.cc');
+            background-image: url('https://i.postimg.cc/J0fZ3W24/Background-2.png');
             background-size: cover;
             background-position: center;
-            background-attachment: fixed;
             color: #ffffff;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             display: flex;
@@ -69,9 +29,7 @@
             font-weight: 600;
         }
         .card {
-            background-color: rgba(30, 30, 30, 0.75);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            background-color: #1e1e1e;
             width: 100%;
             max-width: 350px;
             padding: 20px;
@@ -79,9 +37,9 @@
             border-radius: 16px;
             text-decoration: none;
             color: white;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
             transition: transform 0.2s;
-            border: 1px solid rgba(255,255,255,0.1);
+            border: 1px solid #2d2d2d;
             box-sizing: border-box;
         }
         .card:active {
@@ -90,14 +48,15 @@
         .card h2 {
             margin: 0 0 8px 0;
             font-size: 20px;
-            color: #ff66b2;
+            color: #ff66b2; /* Colore rosa stile Glide */
         }
         .card p {
             margin: 0;
             font-size: 14px;
-            color: #d1d1d1;
+            color: #b3b3b3;
             line-height: 1.4;
         }
+        /* Stile del Banner di Aiuto per le Scorciatoie */
         #shortcut-banner {
             position: fixed;
             bottom: 20px;
@@ -119,69 +78,48 @@
 </head>
 <body>
 
-    <!-- SCHERMATA DI APERTURA ANIMATA -->
-    <div id="splash-screen">
-        <div class="loader-spinner"></div>
-        <div class="loader-text">Caricamento Omnia...</div>
-    </div>
-
-    <!-- TITOLO PRINCIPALE -->
     <h1>Omnia</h1>
 
     <!-- SCHEDA 1 -->
-    <a href="https://webnode.it" class="card">
+    <a href="https://microscopio-9.webnode.it/" class="card">
         <h2>Citologia</h2>
         <p>Galleria di vetrini e osservazioni al microscopio.</p>
     </a>
 
     <!-- SCHEDA 2 -->
-    <a href="https://webnode.it" class="card">
+    <a href="https://il-mio-sito-web-59sgr9.webnode.it/" class="card">
         <h2>Stampe 3D</h2>
-        <p>Qui si possono trovare tutte le stampe stampate, preferite o future divise in argomenti.</p>
+        <p>Qui si possono trovare tutte le stampe eseguite, preferite o future divise in argomenti.</p>
     </a>
-
-    <!-- Banner di Aiuto Installazione -->
+    <!-- Banner che compare dinamicamente -->
     <div id="shortcut-banner" style="display: none;"></div>
 
     <script>
-        // Gestione della Schermata di Apertura (Splash Screen)
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                const splash = document.getElementById('splash-screen');
-                if(splash) {
-                    splash.style.opacity = '0';
-                    splash.style.visibility = 'hidden';
-                }
-            }, 1500); // Svanisce dopo 1.5 secondi
-        });
-
-        // Logica del Banner di installazione per i telefoni
+        // Sistema di rilevamento automatico del telefono/PC
         window.addEventListener('DOMContentLoaded', () => {
             const banner = document.getElementById('shortcut-banner');
-            const ua = navigator.userAgent;
-            const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
-            const isSafari = /^((?!chrome|android|crios|fxios|brave).)*safari/i.test(ua);
-            
-            if (isIOS && !isSafari) {
-                banner.style.backgroundColor = "#ff9800";
-                banner.innerHTML = "⚠️ Per installare l'app: copia questo link e <b>aprilo nel browser Safari</b>!";
-                banner.style.display = 'block';
-            } else if (isIOS && isSafari) {
-                banner.style.backgroundColor = "#ff66b2";
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+            const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+            // Se l'utente usa un dispositivo Apple (iPhone/Mac) o il browser Safari
+            if (isIOS || isSafari || isMac) {
                 banner.innerHTML = "📲 Su Safari: Premi <b>Condividi</b> (🗂️) e poi <b>Aggiungi alla schermata Home</b>";
                 banner.style.display = 'block';
-            } else {
-                banner.style.backgroundColor = "#ff66b2";
+            } 
+            // Se l'utente usa un dispositivo Android o Windows (Chrome/Edge)
+            else {
                 banner.innerHTML = "📲 Su Android/Chrome: Premi i <b>3 puntini</b> (⋮) e seleziona <b>Crea scorciatoia</b>";
                 banner.style.display = 'block';
             }
         });
-
         // LOGICA SEGRETA: 5 CLICK SULLA SCRITTA OMNIA -> PASSWORD ADMIN
         let clickCount = 0;
+        // Seleziona il titolo principale dell'applicazione (l'elemento h1 con scritto Omnia)
         const titleTrigger = document.querySelector('h1');
 
         if (titleTrigger) {
+            // Rende la scritta cliccabile e impedisce che venga selezionato il testo per errore durante i click veloci
             titleTrigger.style.cursor = 'pointer';
             titleTrigger.style.userSelect = 'none';
             titleTrigger.style.webkitUserSelect = 'none';
@@ -189,12 +127,15 @@
             titleTrigger.addEventListener('click', () => {
                 clickCount++;
                 if (clickCount === 5) {
-                    clickCount = 0;
+                    clickCount = 0; // Resetta il contatore
+                    
+                    // Fa comparire la finestrella nativa del telefono per chiedere la password
                     const passwordInput = prompt("🔒 ACCESSO ADMIN\nInserisci la password di amministrazione per accedere al reparto segreto:");
                     
+                    // Controlla se la password è corretta (puoi cambiare "omnia123" con la tua password preferita)
                     if (passwordInput === "omnia123") {
                         alert("✅ Password corretta. Reindirizzamento in corso...");
-                        // SOSTITUISCI IL LINK QUI SOTTO CON QUELLO DEL TUO MERCATO NERO
+                        // Ti manda direttamente al tuo sito segreto (SOSTITUISCI IL LINK QUI SOTTO)
                         window.location.href = "INSERISCI_QUI_IL_LINK_DEL_SITO_SEGRETO";
                     } else if (passwordInput !== null) {
                         alert("❌ Password errata. Accesso negato.");
@@ -202,6 +143,7 @@
                 }
             });
         }
+    
     </script>
 </body>
 </html>
