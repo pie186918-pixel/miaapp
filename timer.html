@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -33,7 +32,6 @@
             display: inline-block;
         }
 
-        /* Contenitore principale a griglia per PC e telefono */
         .wrapper {
             display: flex;
             justify-content: center;
@@ -64,19 +62,24 @@
             letter-spacing: 1px;
         }
 
-        .display {
-            font-size: 3.5rem;
+        /* Ora esatta MOLTO GRANDE */
+        .clock-display {
+            font-size: 4.5rem;
             font-weight: bold;
             font-family: monospace;
             color: #ffffff;
             margin-bottom: 20px;
         }
 
+        /* Timer più basso e compatto */
         .timer-display {
+            font-size: 2.8rem;
+            font-weight: bold;
+            font-family: monospace;
             color: #38bdf8;
+            margin-bottom: 20px;
         }
 
-        /* Controlli del timer */
         .controls {
             display: flex;
             flex-direction: column;
@@ -128,13 +131,13 @@
         <!-- ORA ESATTA -->
         <div class="card">
             <h2>Ora Esatta</h2>
-            <div id="clock" class="display">--:--:--</div>
+            <div id="clock" class="clock-display">--:--:--</div>
         </div>
 
         <!-- TIMER -->
         <div class="card">
             <h2>Timer</h2>
-            <div id="timer-display" class="display timer-display">01:00:00</div>
+            <div id="timer-display" class="timer-display">01:00:00</div>
 
             <div class="controls">
                 <!-- Suggerimenti rapidi -->
