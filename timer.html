@@ -62,16 +62,16 @@
             letter-spacing: 1px;
         }
 
-        /* Ora esatta MOLTO GRANDE */
+        /* Ora esatta grande ma senza secondi (ferma e rilassante) */
         .clock-display {
-            font-size: 4.5rem;
+            font-size: 4.8rem;
             font-weight: bold;
             font-family: monospace;
             color: #ffffff;
             margin-bottom: 20px;
         }
 
-        /* Timer più basso e compatto */
+        /* Timer più basso */
         .timer-display {
             font-size: 2.8rem;
             font-weight: bold;
@@ -128,10 +128,10 @@
     <a href="menu.html" class="back-btn">← Torna al Menu</a>
 
     <div class="wrapper">
-        <!-- ORA ESATTA -->
+        <!-- ORA ESATTA (Senza secondi) -->
         <div class="card">
             <h2>Ora Esatta</h2>
-            <div id="clock" class="clock-display">--:--:--</div>
+            <div id="clock" class="clock-display">--:--</div>
         </div>
 
         <!-- TIMER -->
@@ -165,16 +165,37 @@
     </div>
 
     <script>
-        // --- ORA ESATTA ---
+        // --- ORA ESATTA (Solo Ore e Minuti, si aggiorna ogni minuto) ---
         function updateClock() {
             const now = new Date();
             const h = String(now.getHours()).padStart(2, '0');
             const m = String(now.getMinutes()).padStart(2, '0');
-            const s = String(now.getSeconds()).padStart(2, '0');
-            document.getElementById('clock').textContent = h + ':' + m + ':' + s;
+            document.getElementById('clock').textContent = h + ':' + m;
         }
-        setInterval(updateClock, 1000);
         updateClock();
+        // Aggiorna esattamente all'inizio del minuto successivo per precisione
+        setInterval(updateClock, 10000); 
+
+        // --- AUDIO SUONO SCADENZA ---
+        function playBeep() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); // Nota La
+                gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + 0.3); // Suona per 300ms
+            } catch (e) {
+                console.log("Audio non supportato automaticamente");
+            }
+        }
 
         // --- TIMER ---
         let totalSeconds = 3600; // Default 1 ora
@@ -230,6 +251,7 @@
                     renderTimer();
                 } else {
                     pauseTimer();
+                    playBeep();
                     alert("Tempo scaduto!");
                 }
             }, 1000);
