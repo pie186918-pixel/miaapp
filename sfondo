@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Sfondo Lavagna</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: #000;
+      overflow: hidden;
+    }
+    img {
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover; /* Riempie tutto lo schermo azzerando ogni spazio vuoto */
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <img src="sl_072622_51930_13.jpg" alt="Sfondo Lavagna">
+</body>
+</html>
