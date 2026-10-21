@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -21,60 +22,65 @@
             padding: 20px;
             display: flex;
             flex-direction: column;
-            align-items: center;
         }
 
         .back-btn {
-            align-self: flex-start;
             text-decoration: none;
             color: #38bdf8;
             font-weight: bold;
             font-size: 1.1rem;
             margin-bottom: 20px;
+            display: inline-block;
         }
 
-        .main-box {
-            width: 100%;
-            max-width: 500px;
+        /* Contenitore principale a griglia per PC e telefono */
+        .wrapper {
             display: flex;
-            flex-direction: column;
-            gap: 25px;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 30px;
+            flex-wrap: wrap;
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
         }
 
-        /* Sezione Ora */
         .card {
             background: #111827;
             border: 1px solid #1f2937;
             border-radius: 16px;
-            padding: 20px;
+            padding: 25px;
             text-align: center;
+            flex: 1;
+            min-width: 300px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
         }
 
         .card h2 {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             color: #9ca3af;
             text-transform: uppercase;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             letter-spacing: 1px;
         }
 
         .display {
-            font-size: 3rem;
+            font-size: 3.5rem;
             font-weight: bold;
             font-family: monospace;
             color: #ffffff;
+            margin-bottom: 20px;
         }
 
-        /* Sezione Timer */
         .timer-display {
             color: #38bdf8;
         }
 
+        /* Controlli del timer */
         .controls {
             display: flex;
             flex-direction: column;
             gap: 12px;
-            margin-top: 15px;
         }
 
         .row {
@@ -84,7 +90,7 @@
         }
 
         input {
-            width: 30%;
+            width: 45%;
             padding: 10px;
             background: #1f2937;
             border: 1px solid #374151;
@@ -95,14 +101,14 @@
         }
 
         button {
-            flex: 1;
-            padding: 12px;
+            padding: 12px 15px;
             border: none;
             border-radius: 8px;
             font-weight: bold;
-            font-size: 1rem;
+            font-size: 0.95rem;
             cursor: pointer;
             color: #ffffff;
+            flex: 1;
         }
 
         .btn-preset { background: #374151; }
@@ -118,7 +124,7 @@
 
     <a href="menu.html" class="back-btn">← Torna al Menu</a>
 
-    <div class="main-box">
+    <div class="wrapper">
         <!-- ORA ESATTA -->
         <div class="card">
             <h2>Ora Esatta</h2>
@@ -141,7 +147,9 @@
                 <div class="row">
                     <input type="number" id="input-h" placeholder="Ore" min="0">
                     <input type="number" id="input-m" placeholder="Min" min="0" max="59">
-                    <button type="button" class="btn-set" onclick="setCustom()">Imposta</button>
+                </div>
+                <div class="row">
+                    <button type="button" class="btn-set" onclick="setCustom()">Imposta Ora/Min</button>
                 </div>
 
                 <!-- Tasti di controllo -->
@@ -154,7 +162,7 @@
     </div>
 
     <script>
-        // --- ORA ESATTA (Fuso orario locale/italiano) ---
+        // --- ORA ESATTA ---
         function updateClock() {
             const now = new Date();
             const h = String(now.getHours()).padStart(2, '0');
@@ -166,7 +174,7 @@
         updateClock();
 
         // --- TIMER ---
-        let totalSeconds = 3600; // 1 Ora di default
+        let totalSeconds = 3600; // Default 1 ora
         let initialSeconds = 3600;
         let timerInterval = null;
         let isRunning = false;
@@ -198,6 +206,7 @@
         }
 
         function toggleTimer() {
+            if (totalSeconds <= 0) return;
             if (isRunning) {
                 pauseTimer();
             } else {
