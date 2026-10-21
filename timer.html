@@ -38,7 +38,7 @@
             align-items: flex-start;
             gap: 30px;
             flex-wrap: wrap;
-            max-width: 900px;
+            max-width: 950px;
             margin: 0 auto;
             width: 100%;
         }
@@ -62,16 +62,17 @@
             letter-spacing: 1px;
         }
 
-        /* Ora esatta */
+        /* Ora Esatta INGRANDITA (6.5rem) */
         .clock-display {
-            font-size: 4.8rem;
+            font-size: clamp(4rem, 8vw, 6.5rem);
             font-weight: bold;
             font-family: monospace;
             color: #ffffff;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
+            line-height: 1;
         }
 
-        /* Timer */
+        /* Timer compattezza mantenuta */
         .timer-display {
             font-size: 2.8rem;
             font-weight: bold;
@@ -122,7 +123,7 @@
 
         button:active { opacity: 0.8; }
 
-        /* Pop-up personalizzato in stile Omnia */
+        /* Pop-up personalizzato */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -191,13 +192,11 @@
             <div id="timer-display" class="timer-display">01:00:00</div>
 
             <div class="controls">
-                <!-- Suggerimenti rapidi -->
                 <div class="row">
                     <button type="button" class="btn-preset" onclick="setPreset(1)">1 Ora</button>
                     <button type="button" class="btn-preset" onclick="setPreset(2)">2 Ore</button>
                 </div>
 
-                <!-- Input manuali -->
                 <div class="row">
                     <input type="number" id="input-h" placeholder="Ore" min="0">
                     <input type="number" id="input-m" placeholder="Min" min="0" max="59">
@@ -206,7 +205,6 @@
                     <button type="button" class="btn-set" onclick="setCustom()">Imposta Ora/Min</button>
                 </div>
 
-                <!-- Tasti di controllo -->
                 <div class="row">
                     <button type="button" id="btn-toggle" class="btn-start" onclick="toggleTimer()">Avvia</button>
                     <button type="button" id="btn-reset" class="btn-reset" onclick="resetTimer()">Azzera</button>
@@ -253,7 +251,7 @@
                     const gainNode = audioCtx.createGain();
                     
                     oscillator.type = 'square';
-                    oscillator.frequency.setValueAtTime(987.77, audioCtx.currentTime); // Nota Si
+                    oscillator.frequency.setValueAtTime(987.77, audioCtx.currentTime);
                     
                     gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
                     
@@ -267,10 +265,8 @@
                 }
             }
 
-            // Mostra il pop-up elegante
             document.getElementById('alarm-modal').style.display = 'flex';
 
-            // Suona un beep ritmico e continuo ogni 350 millisecondi
             playSingleBeep();
             alarmInterval = setInterval(playSingleBeep, 350);
         }
@@ -284,7 +280,7 @@
         }
 
         // --- TIMER ---
-        let totalSeconds = 3600; // Default 1 ora
+        let totalSeconds = 3600;
         let initialSeconds = 3600;
         let timerInterval = null;
         let isRunning = false;
@@ -344,7 +340,7 @@
                     renderTimer();
                 } else {
                     pauseTimer();
-                    startAlarm(); // Avvia l'allarme sonoro continuo e mostra l'avviso
+                    startAlarm();
                 }
             }, 1000);
         }
