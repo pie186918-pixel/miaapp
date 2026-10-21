@@ -7,7 +7,7 @@
     <link href="https://i.postimg.cc/MGJgF2VH/foto.png" rel="icon" type="image/png">
     <link rel="apple-touch-icon" href="https://i.postimg.cc/MGJgF2VH/foto.png">
     <style>
-        /* Tema scuro in stile Omnia */
+        /* Stile coerente con il tema scuro e glassmorphism di Omnia */
         body {
             font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background-color: #0f172a;
@@ -38,7 +38,7 @@
             opacity: 0.8;
         }
 
-        /* Schede in stile glassmorphism */
+        /* Schede in vetro sfocato */
         .card {
             display: block;
             background: rgba(255, 255, 255, 0.05);
@@ -71,11 +71,11 @@
             color: #cbd5e1;
         }
 
-        /* Schermo intero pulito per la sola immagine */
+        /* Contenitore per lo Schermo Intero */
         .image-modal {
             display: none;
             position: fixed;
-            z-index: 9999;
+            z-index: 99999;
             top: 0;
             left: 0;
             width: 100vw;
@@ -86,10 +86,11 @@
             cursor: pointer;
         }
 
+        /* L'immagine riempie l'intero schermo */
         .image-modal img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover; /* Copre ogni singolo pixel dello schermo */
         }
     </style>
 </head>
@@ -105,10 +106,10 @@
         <p>Collegamento al portale Argo.</p>
     </a>
 
-    <!-- Bottone 2: Sfondo Lavagna (Apre l'immagine a schermo intero) -->
+    <!-- Bottone 2: Sfondo Lavagna -->
     <a href="#" class="card" onclick="apriImmagine('sl_072622_51930_13.jpg'); return false;">
         <h2>Sfondo Lavagna</h2>
-        <p>Sfondo a quadretti per lavagna.</p>
+        <p>Visualizza lo sfondo a quadretti a schermo intero.</p>
     </a>
 
     <!-- Bottone 3: Terzo Link -->
@@ -117,7 +118,7 @@
         <p>Descrizione del terzo link o risorsa.</p>
     </a>
 
-    <!-- Overlay schermo intero -->
+    <!-- Overlay Schermo Intero -->
     <div id="image-modal" class="image-modal" onclick="chiudiImmagine()">
         <img id="modal-img" src="" alt="Sfondo Lavagna">
     </div>
@@ -128,10 +129,29 @@
             const img = document.getElementById('modal-img');
             img.src = url;
             modal.style.display = 'flex';
+
+            // Attiva la modalità schermo intero nativa del browser
+            if (modal.requestFullscreen) {
+                modal.requestFullscreen();
+            } else if (modal.webkitRequestFullscreen) {
+                modal.webkitRequestFullscreen();
+            } else if (modal.msRequestFullscreen) {
+                modal.msRequestFullscreen();
+            }
         }
 
         function chiudiImmagine() {
-            document.getElementById('image-modal').style.display = 'none';
+            const modal = document.getElementById('image-modal');
+            modal.style.display = 'none';
+
+            // Esce dallo schermo intero nativo
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            }
         }
     </script>
 
