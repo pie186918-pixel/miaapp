@@ -3,60 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nuova Sezione - Omnia</title>
+    <title>Risorse - Omnia</title>
     <link href="https://i.postimg.cc/MGJgF2VH/foto.png" rel="icon" type="image/png">
-    <link rel="apple-touch-icon">
+    <link rel="apple-touch-icon" href="https://i.postimg.cc/MGJgF2VH/foto.png">
     <style>
-        /* Mantiene lo stile coerente con la tua app */
+        /* Tema scuro in stile Omnia */
         body {
             font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background-color: #f4f4f9;
-            color: #333;
+            background-color: #0f172a;
+            background-image: radial-gradient(circle at 50% 0%, #1e293b 0%, #0f172a 100%);
+            color: #f8fafc;
             max-width: 600px;
             margin: 0 auto;
             padding: 20px;
+            min-height: 100vh;
         }
 
         h1 {
             text-align: center;
-            color: #2c3e50;
-        }
-
-        a.card {
-            display: block;
-            background: white;
-            border-radius: 12px;
-            padding: 16px 20px;
-            margin-bottom: 15px;
-            text-decoration: none;
-            color: inherit;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        a.card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
-        }
-
-        h2 {
-            margin: 0 0 5px 0;
-            font-size: 1.2rem;
-            color: #007aff;
-        }
-
-        p {
-            margin: 0;
-            font-size: 0.95rem;
-            color: #666;
+            color: #ffffff;
+            font-size: 2.2rem;
+            margin-bottom: 30px;
         }
 
         .back-btn {
             display: inline-block;
             margin-bottom: 20px;
             text-decoration: none;
-            color: #007aff;
-            font-weight: bold;
+            color: #38bdf8;
+            font-weight: 600;
+        }
+
+        .back-btn:hover {
+            opacity: 0.8;
+        }
+
+        /* Schede in stile glassmorphism */
+        .card {
+            display: block;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 18px 22px;
+            margin-bottom: 16px;
+            text-decoration: none;
+            color: inherit;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        h2 {
+            margin: 0 0 6px 0;
+            font-size: 1.25rem;
+            color: #38bdf8;
+        }
+
+        p {
+            margin: 0;
+            font-size: 0.95rem;
+            color: #cbd5e1;
+        }
+
+        /* Schermo intero pulito per la sola immagine */
+        .image-modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #000000;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .image-modal img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
     </style>
 </head>
@@ -66,21 +99,41 @@
 
     <h1>Risorse</h1>
 
-    <!-- Bottoni / Link esterni -->
+    <!-- Bottone 1: Registro -->
     <a href="https://www.portaleargo.it/auth/sso/login/?login_challenge=59fa1a97a9a145f3a48c2bce2cc8ebed" class="card" target="_blank">
         <h2>Registro</h2>
         <p>Collegamento al portale Argo.</p>
     </a>
 
-    <a href="sl_072622_51930_13.jpg" class="card" target="_blank">
+    <!-- Bottone 2: Sfondo Lavagna (Apre l'immagine a schermo intero) -->
+    <a href="#" class="card" onclick="apriImmagine('sl_072622_51930_13.jpg'); return false;">
         <h2>Sfondo Lavagna</h2>
         <p>Sfondo a quadretti per lavagna.</p>
     </a>
 
+    <!-- Bottone 3: Terzo Link -->
     <a href="https://LINK_3_QUI" class="card" target="_blank">
         <h2>Terzo Link</h2>
         <p>Descrizione del terzo link o risorsa.</p>
     </a>
+
+    <!-- Overlay schermo intero -->
+    <div id="image-modal" class="image-modal" onclick="chiudiImmagine()">
+        <img id="modal-img" src="" alt="Sfondo Lavagna">
+    </div>
+
+    <script>
+        function apriImmagine(url) {
+            const modal = document.getElementById('image-modal');
+            const img = document.getElementById('modal-img');
+            img.src = url;
+            modal.style.display = 'flex';
+        }
+
+        function chiudiImmagine() {
+            document.getElementById('image-modal').style.display = 'none';
+        }
+    </script>
 
 </body>
 </html>
