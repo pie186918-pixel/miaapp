@@ -86,6 +86,14 @@
             font-weight: bold;
         }
 
+        .error-msg {
+            color: #ef4444;
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            display: none;
+        }
+
         .btn-extract {
             width: 100%;
             padding: 14px;
@@ -142,9 +150,11 @@
             </div>
             <div class="input-group">
                 <label for="max-num">A</label>
-                <input type="number" id="max-num" value="30" max="100">
+                <input type="number" id="max-num" value="30">
             </div>
         </div>
+
+        <div id="error" class="error-msg">Il valore minimo dev'essere minore o uguale al massimo!</div>
 
         <button type="button" class="btn-extract" onclick="estraiNumero()">Estrai Numero</button>
 
@@ -160,7 +170,6 @@
            TABELLA DEI PESI / PERCENTUALI (da 1 a 30)
            Modifica il valore accanto a ciascun numero nel codice per cambiare le sue probabilità relative.
            Un valore più alto = maggiore probabilità di essere estratto.
-           Se un numero non è presente nella lista, il suo peso predefinito sarà 1.
         */
         const pesiPersonalizzati = {
             1: 1,  2: 1,  3: 1,  4: 1,  5: 1,
@@ -172,4 +181,62 @@
         };
 
         function estraiNumero() {
-            const min = parseInt(
+            const minInput = document.getElementById('min-num').value;
+            const maxInput = document.getElementById('max-num').value;
+            const errorElement = document.getElementById('error');
+            const display = document.getElementById('result');
+
+            const min = parseInt(minInput, 10);
+            const max = parseInt(maxInput, 10);
+
+            // Controllo validità
+            if (isNaN(min) || isNaN(max) || min > max) {
+                errorElement.style.display = 'block';
+                display.textContent = '--';
+                return;
+            } else {
+                errorElement.style.display = 'none';
+            }
+
+            // Calcolo totale dei pesi
+            let pesoTotale = 0;
+            let elementi = [];
+
+            for (let i = min; i <= max; i++) {
+                let peso = (pesiPersonalizzati[i] !== undefined) ? pesiPersonalizzati[i] : 1;
+                elementi.push({ numero: i, peso: peso });
+                pesoTotale += peso;
+            }
+
+            if (pesoTotale <= 0) {
+                errorElement.textContent = "I pesi inseriti impediscono l'estrazione!";
+                errorElement.style.display = 'block';
+                return;
+            }
+
+            // Algoritmo di estrazione casuale ponderata
+            let rand = Math.random() * pesoTotale;
+            let estratto = elementi[elementi.length - 1].numero; // Fallback sull'ultimo
+
+            for (let item of elementi) {
+                if (rand <= item.peso) {
+                    estratto = item.numero;
+                    break;
+                }
+                rand -= item.peso;
+            }
+
+            // Animazione veloce estrazione
+            let counter = 0;
+            let speedInterval = setInterval(() => {
+                display.textContent = Math.floor(Math.random() * (max - min + 1)) + min;
+                counter++;
+                if (counter >= 12) {
+                    clearInterval(speedInterval);
+                    display.textContent = estratto;
+                }
+            }, 35);
+        }
+    </script>
+</body>
+</html>
