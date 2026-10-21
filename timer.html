@@ -62,7 +62,7 @@
             letter-spacing: 1px;
         }
 
-        /* Ora esatta stabile (senza secondi) */
+        /* Ora esatta */
         .clock-display {
             font-size: 4.8rem;
             font-weight: bold;
@@ -71,7 +71,7 @@
             margin-bottom: 20px;
         }
 
-        /* Timer più basso */
+        /* Timer */
         .timer-display {
             font-size: 2.8rem;
             font-weight: bold;
@@ -121,6 +121,57 @@
         .btn-reset { background: #dc2626; }
 
         button:active { opacity: 0.8; }
+
+        /* Pop-up personalizzato in stile Omnia */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-box {
+            background: #1e293b;
+            border: 2px solid #ef4444;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            max-width: 350px;
+            box-shadow: 0 0 30px rgba(239, 68, 68, 0.4);
+            animation: pulse 1s infinite alternate;
+        }
+
+        .modal-box h3 {
+            color: #ef4444;
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .modal-box p {
+            color: #f8fafc;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+
+        .btn-modal-ok {
+            background: #ef4444;
+            color: #ffffff;
+            width: 100%;
+            font-size: 1.1rem;
+            padding: 12px;
+        }
+
+        @keyframes pulse {
+            from { transform: scale(1); }
+            to { transform: scale(1.03); }
+        }
     </style>
 </head>
 <body>
@@ -164,6 +215,15 @@
         </div>
     </div>
 
+    <!-- Pop-up di avviso tempo scaduto -->
+    <div id="alarm-modal" class="modal-overlay">
+        <div class="modal-box">
+            <h3>TEMPO SCADUTO!</h3>
+            <p>Il timer personalizzato è arrivato a zero.</p>
+            <button type="button" class="btn-modal-ok" onclick="closeAlarm()">OK / FERMA ALLARME</button>
+        </div>
+    </div>
+
     <script>
         // --- ORA ESATTA ---
         function updateClock() {
@@ -175,7 +235,7 @@
         updateClock();
         setInterval(updateClock, 10000); 
 
-        // --- SISTEMA AUDIO (Suona SUBITO e ripetutamente) ---
+        // --- ALLARME CON BEEP CONTINUI ---
         let audioCtx = null;
         let alarmInterval = null;
 
@@ -195,7 +255,7 @@
                     oscillator.type = 'square';
                     oscillator.frequency.setValueAtTime(987.77, audioCtx.currentTime); // Nota Si
                     
-                    gainNode.gain.setValueAtTime(0.25, audioCtx.currentTime);
+                    gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
                     
                     oscillator.connect(gainNode);
                     gainNode.connect(audioCtx.destination);
@@ -207,18 +267,20 @@
                 }
             }
 
-            // Suona subito il primo beep
+            // Mostra il pop-up elegante
+            document.getElementById('alarm-modal').style.display = 'flex';
+
+            // Suona un beep ritmico e continuo ogni 350 millisecondi
             playSingleBeep();
-            
-            // Ripete il beep ogni 400ms per un allarme continuo
-            alarmInterval = setInterval(playSingleBeep, 400);
+            alarmInterval = setInterval(playSingleBeep, 350);
         }
 
-        function stopAlarm() {
+        function closeAlarm() {
             if (alarmInterval) {
                 clearInterval(alarmInterval);
                 alarmInterval = null;
             }
+            document.getElementById('alarm-modal').style.display = 'none';
         }
 
         // --- TIMER ---
@@ -254,7 +316,7 @@
         }
 
         function toggleTimer() {
-            stopAlarm();
+            closeAlarm();
             if (totalSeconds <= 0) return;
             if (isRunning) {
                 pauseTimer();
@@ -265,9 +327,8 @@
 
         function startTimer() {
             if (totalSeconds <= 0) return;
-            stopAlarm();
+            closeAlarm();
             
-            // Inizializza l'audio al click di Avvia per i permessi del browser
             if (!audioCtx) {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             }
@@ -283,11 +344,7 @@
                     renderTimer();
                 } else {
                     pauseTimer();
-                    startAlarm(); // Avvia subito il beep allarme prima del pop-up
-                    setTimeout(() => {
-                        alert("Tempo scaduto!");
-                        stopAlarm(); // Ferma l'allarme dopo aver chiuso il popup
-                    }, 50);
+                    startAlarm(); // Avvia l'allarme sonoro continuo e mostra l'avviso
                 }
             }, 1000);
         }
@@ -295,7 +352,7 @@
         function pauseTimer() {
             isRunning = false;
             clearInterval(timerInterval);
-            stopAlarm();
+            closeAlarm();
             let btn = document.getElementById('btn-toggle');
             btn.textContent = "Avvia";
             btn.className = "btn-start";
@@ -303,7 +360,7 @@
 
         function resetTimer() {
             pauseTimer();
-            stopAlarm();
+            closeAlarm();
             totalSeconds = initialSeconds;
             renderTimer();
         }
