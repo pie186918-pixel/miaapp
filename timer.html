@@ -62,7 +62,7 @@
             letter-spacing: 1px;
         }
 
-        /* Ora esatta grande ma senza secondi (ferma e rilassante) */
+        /* Ora esatta stabile (senza secondi) */
         .clock-display {
             font-size: 4.8rem;
             font-weight: bold;
@@ -128,7 +128,7 @@
     <a href="menu.html" class="back-btn">← Torna al Menu</a>
 
     <div class="wrapper">
-        <!-- ORA ESATTA (Senza secondi) -->
+        <!-- ORA ESATTA -->
         <div class="card">
             <h2>Ora Esatta</h2>
             <div id="clock" class="clock-display">--:--</div>
@@ -158,14 +158,14 @@
                 <!-- Tasti di controllo -->
                 <div class="row">
                     <button type="button" id="btn-toggle" class="btn-start" onclick="toggleTimer()">Avvia</button>
-                    <button type="button" class="btn-reset" onclick="resetTimer()">Azzera</button>
+                    <button type="button" id="btn-reset" class="btn-reset" onclick="resetTimer()">Azzera</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // --- ORA ESATTA (Solo Ore e Minuti, si aggiorna ogni minuto) ---
+        // --- ORA ESATTA (Solo Ore e Minuti) ---
         function updateClock() {
             const now = new Date();
             const h = String(now.getHours()).padStart(2, '0');
@@ -173,25 +173,38 @@
             document.getElementById('clock').textContent = h + ':' + m;
         }
         updateClock();
-        // Aggiorna esattamente all'inizio del minuto successivo per precisione
         setInterval(updateClock, 10000); 
 
-        // --- AUDIO SUONO SCADENZA ---
-        function playBeep() {
+        // --- AUDIO MULTIPLO (Più beep vigorosi a tempo scaduto) ---
+        function playBeepSequence() {
             try {
                 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                const oscillator = audioCtx.createOscillator();
-                const gainNode = audioCtx.createGain();
                 
-                oscillator.type = 'sine';
-                oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); // Nota La
-                gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-                
-                oscillator.connect(gainNode);
-                gainNode.connect(audioCtx.destination);
-                
-                oscillator.start();
-                oscillator.stop(audioCtx.currentTime + 0.3); // Suona per 300ms
+                function playTone(delay) {
+                    setTimeout(() => {
+                        if (audioCtx.state === 'suspended') {
+                            audioCtx.resume();
+                        }
+                        const oscillator = audioCtx.createOscillator();
+                        const gainNode = audioCtx.createGain();
+                        
+                        oscillator.type = 'square'; // Suono più squillante e udibile
+                        oscillator.frequency.setValueAtTime(1046.50, audioCtx.currentTime); // Nota Do (alta)
+                        
+                        gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime); // Volume più alto
+                        
+                        oscillator.connect(gainNode);
+                        gainNode.connect(audioCtx.destination);
+                        
+                        oscillator.start();
+                        oscillator.stop(audioCtx.currentTime + 0.25); // Durata di ogni singolo beep
+                    }, delay);
+                }
+
+                // Esegue una sequenza di 3 beep ripetuti
+                playTone(0);
+                playTone(350);
+                playTone(700);
             } catch (e) {
                 console.log("Audio non supportato automaticamente");
             }
@@ -251,7 +264,7 @@
                     renderTimer();
                 } else {
                     pauseTimer();
-                    playBeep();
+                    playBeepSequence(); // Suona la sequenza di beep
                     alert("Tempo scaduto!");
                 }
             }, 1000);
