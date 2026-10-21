@@ -165,7 +165,7 @@
     </div>
 
     <script>
-        // --- ORA ESATTA (Solo Ore e Minuti) ---
+        // --- ORA ESATTA ---
         function updateClock() {
             const now = new Date();
             const h = String(now.getHours()).padStart(2, '0');
@@ -175,38 +175,49 @@
         updateClock();
         setInterval(updateClock, 10000); 
 
-        // --- AUDIO MULTIPLO (Più beep vigorosi a tempo scaduto) ---
-        function playBeepSequence() {
-            try {
-                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                
-                function playTone(delay) {
-                    setTimeout(() => {
-                        if (audioCtx.state === 'suspended') {
-                            audioCtx.resume();
-                        }
-                        const oscillator = audioCtx.createOscillator();
-                        const gainNode = audioCtx.createGain();
-                        
-                        oscillator.type = 'square'; // Suono più squillante e udibile
-                        oscillator.frequency.setValueAtTime(1046.50, audioCtx.currentTime); // Nota Do (alta)
-                        
-                        gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime); // Volume più alto
-                        
-                        oscillator.connect(gainNode);
-                        gainNode.connect(audioCtx.destination);
-                        
-                        oscillator.start();
-                        oscillator.stop(audioCtx.currentTime + 0.25); // Durata di ogni singolo beep
-                    }, delay);
-                }
+        // --- SISTEMA AUDIO (Suona SUBITO e ripetutamente) ---
+        let audioCtx = null;
+        let alarmInterval = null;
 
-                // Esegue una sequenza di 3 beep ripetuti
-                playTone(0);
-                playTone(350);
-                playTone(700);
-            } catch (e) {
-                console.log("Audio non supportato automaticamente");
+        function startAlarm() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            function playSingleBeep() {
+                try {
+                    const oscillator = audioCtx.createOscillator();
+                    const gainNode = audioCtx.createGain();
+                    
+                    oscillator.type = 'square';
+                    oscillator.frequency.setValueAtTime(987.77, audioCtx.currentTime); // Nota Si
+                    
+                    gainNode.gain.setValueAtTime(0.25, audioCtx.currentTime);
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioCtx.destination);
+                    
+                    oscillator.start();
+                    oscillator.stop(audioCtx.currentTime + 0.2);
+                } catch (e) {
+                    console.log(e);
+                }
+            }
+
+            // Suona subito il primo beep
+            playSingleBeep();
+            
+            // Ripete il beep ogni 400ms per un allarme continuo
+            alarmInterval = setInterval(playSingleBeep, 400);
+        }
+
+        function stopAlarm() {
+            if (alarmInterval) {
+                clearInterval(alarmInterval);
+                alarmInterval = null;
             }
         }
 
@@ -243,6 +254,7 @@
         }
 
         function toggleTimer() {
+            stopAlarm();
             if (totalSeconds <= 0) return;
             if (isRunning) {
                 pauseTimer();
@@ -253,6 +265,13 @@
 
         function startTimer() {
             if (totalSeconds <= 0) return;
+            stopAlarm();
+            
+            // Inizializza l'audio al click di Avvia per i permessi del browser
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+
             isRunning = true;
             let btn = document.getElementById('btn-toggle');
             btn.textContent = "Interrompi";
@@ -264,8 +283,11 @@
                     renderTimer();
                 } else {
                     pauseTimer();
-                    playBeepSequence(); // Suona la sequenza di beep
-                    alert("Tempo scaduto!");
+                    startAlarm(); // Avvia subito il beep allarme prima del pop-up
+                    setTimeout(() => {
+                        alert("Tempo scaduto!");
+                        stopAlarm(); // Ferma l'allarme dopo aver chiuso il popup
+                    }, 50);
                 }
             }, 1000);
         }
@@ -273,6 +295,7 @@
         function pauseTimer() {
             isRunning = false;
             clearInterval(timerInterval);
+            stopAlarm();
             let btn = document.getElementById('btn-toggle');
             btn.textContent = "Avvia";
             btn.className = "btn-start";
@@ -280,6 +303,7 @@
 
         function resetTimer() {
             pauseTimer();
+            stopAlarm();
             totalSeconds = initialSeconds;
             renderTimer();
         }
