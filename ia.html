@@ -190,7 +190,7 @@
         async function inviaMessaggio() {
             const apiKey = getApiKey();
             if (!apiKey) {
-                alert("Prima di inviare un messaggio devi impostare la tua API Key cliccando sul pulsante 'API Key' in alto a destra!");
+                alert("Prima di inviare un messaggio devi impostare la tua API Key!");
                 impostaApiKey();
                 return;
             }
@@ -218,37 +218,48 @@
 
             sendBtn.disabled = true;
 
-            try {
-                // Aggiornato al modello corretto richiesto dall'API: gemini-3.8-flash
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`;
-                
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        contents: [{
-                            parts: [{ text: testo }]
-                        }]
-                    })
-                });
+            // Elenco di modelli da provare in sequenza automatica
+            const modelli = [
+                'gemini-3.8-flash',
+                'gemini-1.5-flash-latest',
+                'gemini-1.5-pro-latest'
+            ];
 
-                const data = await response.json();
+            let rispostaOttenuta = false;
+            let ultimoErrore = '';
 
-                if (data.error) {
-                    loadingDiv.textContent = "Errore API: " + (data.error.message || "Errore sconosciuto.");
-                } else if (data.candidates && data.candidates[0].content && data.candidates[0].content.parts[0].text) {
-                    loadingDiv.textContent = data.candidates[0].content.parts[0].text;
-                } else {
-                    loadingDiv.textContent = "Risposta ricevuta in formato inatteso.";
+            for (const modello of modelli) {
+                try {
+                    const url = `https://generativelanguage.googleapis.com/v1beta/models/${modello}:generateContent?key=${apiKey}`;
+                    
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{ parts: [{ text: testo }] }]
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts[0].text) {
+                        loadingDiv.textContent = data.candidates[0].content.parts[0].text;
+                        rispostaOttenuta = true;
+                        break; // Esce dal ciclo non appena trova una risposta valida
+                    } else if (data.error) {
+                        ultimoErrore = data.error.message || 'Errore di risposta del server.';
+                    }
+                } catch (err) {
+                    ultimoErrore = 'Errore di connessione alla rete.';
                 }
-            } catch (err) {
-                loadingDiv.textContent = "Errore di connessione o blocco di rete.";
-            } finally {
-                sendBtn.disabled = false;
-                chatBox.scrollTop = chatBox.scrollHeight;
             }
+
+            if (!rispostaOttenuta) {
+                loadingDiv.textContent = "Server temporaneamente occupati su tutti i modelli. Riprova tra pochissimo. (" + ultimoErrore + ")";
+            }
+
+            sendBtn.disabled = false;
+            chatBox.scrollTop = chatBox.scrollHeight;
         }
     </script>
 </body>
