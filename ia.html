@@ -213,8 +213,8 @@
             sendBtn.disabled = true;
 
             try {
-                // Endpoint corretto e stabile per Gemini 1.5 Flash via REST API
-                const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+                // Corretto: endpoint v1beta con il modello gemini-1.5-flash supportato
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
                 
                 const response = await fetch(url, {
                     method: 'POST',
@@ -231,7 +231,7 @@
                 const data = await response.json();
 
                 if (data.error) {
-                    loadingDiv.textContent = "Errore API: " + (data.error.message || "Chiave non valida o richiesta non consentita.");
+                    loadingDiv.textContent = "Errore API: " + (data.error.message || "Errore sconosciuto.");
                 } else if (data.candidates && data.candidates[0].content && data.candidates[0].content.parts[0].text) {
                     loadingDiv.textContent = data.candidates[0].content.parts[0].text;
                 } else {
