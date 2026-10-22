@@ -211,7 +211,7 @@
         </div>
 
         <div id="chat" class="chat-box">
-            <div class="msg ai-msg">Ciao! Sono la tua IA scientifica potenziata con KaTeX e correzione automatica delle formule.</div>
+            <div class="msg ai-msg">Ciao! Sono la tua IA scientifica. I pulsanti sono di nuovo attivi!</div>
         </div>
 
         <div class="input-row">
@@ -224,13 +224,13 @@
         const systemPrompt = {
             role: 'system',
             content: `Sei un assistente scientifico e scolastico rigoroso. 
-USA SEMPRE LA SINTASSI LATEX per formule, equazioni e frazioni usando i delimitatori \\( ... \\) oppure \\[ ... \\] (es. \\( \\frac{a}{b} \\)). Quando devi confrontare concetti, usa tabelle Markdown pulite. Agisci come un professore di seconda liceo scientifico con risposte chiare e non troppo lunghe. `
+USA SEMPRE LA SINTASSI LATEX per formule, equazioni e frazioni usando i delimitatori \\( ... \\) oppure \\[ ... \\] (es. \\( \\frac{a}{b} \\)). Quando devi confrontare concetti, usa tabelle Markdown pulite.`
         };
 
         let cronologia = [systemPrompt];
 
         function getApiKey() {
-            return localStorage.getItem('omnia_groq_key'] || '';
+            return localStorage.getItem('omnia_groq_key') || '';
         }
 
         function impostaApiKey() {
@@ -259,13 +259,6 @@ USA SEMPRE LA SINTASSI LATEX per formule, equazioni e frazioni usando i delimita
                     throwOnError: false
                 });
             }
-        }
-
-        // Funzione di correzione automatica: trasforma espressioni matematiche in LaTeX se l'IA si dimentica i tag
-        function preelaboraTestoIA(testo) {
-            // Converte eventuali frazioni scritte come a/b (isolate) in tag LaTeX \frac
-            // Esempio: trasforma formule comuni in LaTeX valido se non lo sono già
-            return testo;
         }
 
         function ottieniMessaggiOttimizzati() {
@@ -337,9 +330,8 @@ USA SEMPRE LA SINTASSI LATEX per formule, equazioni e frazioni usando i delimita
                     const data = await response.json();
 
                     if (response.ok && data.choices && data.choices[0] && data.choices[0].message) {
-                        let rispostaIA = data.choices[0].message.content;
+                        const rispostaIA = data.choices[0].message.content;
                         
-                        // Converte il markdown e le tabelle in HTML e applica il rendering KaTeX
                         loadingDiv.innerHTML = marked.parse(rispostaIA);
 
                         cronologia.push({ role: 'assistant', content: rispostaIA });
