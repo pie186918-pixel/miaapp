@@ -160,37 +160,37 @@
 
     <div class="card">
         <div class="header">
-            <div class="title">Assistente IA Leggero</div>
-            <button class="key-btn" onclick="impostaApiKey()">API Key</button>
+            <div class="title">Assistente IA Scientifico</div>
+            <button class="key-btn" onclick="impostaApiKey()">Groq Key</button>
         </div>
 
         <div id="chat" class="chat-box">
-            <div class="msg ai-msg">Ciao! Sono la tua IA integrata in Omnia. Inviami pure una domanda.</div>
+            <div class="msg ai-msg">Ciao! Sono la tua IA scientifica ultra-veloce. Fammi pure domande su formule, problemi o teoria.</div>
         </div>
 
         <div class="input-row">
-            <textarea id="user-input" placeholder="Scrivi un messaggio..."></textarea>
+            <textarea id="user-input" placeholder="Scrivi un problema o quesito scientifico..."></textarea>
             <button id="send-btn" class="btn-send" onclick="inviaMessaggio()">Invia</button>
         </div>
     </div>
 
     <script>
         function getApiKey() {
-            return localStorage.getItem('omnia_gemini_key') || '';
+            return localStorage.getItem('omnia_groq_key') || '';
         }
 
         function impostaApiKey() {
-            let key = prompt("Inserisci la tua API Key di Google Gemini (gratuita):", getApiKey());
+            let key = prompt("Inserisci la tua API Key di Groq (gratuita su console.groq.com):", getApiKey());
             if (key !== null) {
-                localStorage.setItem('omnia_gemini_key', key.trim());
-                alert("API Key salvata sul tuo dispositivo!");
+                localStorage.setItem('omnia_groq_key', key.trim());
+                alert("API Key Groq salvata sul tuo dispositivo!");
             }
         }
 
         async function inviaMessaggio() {
             const apiKey = getApiKey();
             if (!apiKey) {
-                alert("Prima di inviare un messaggio devi impostare la tua API Key!");
+                alert("Prima di inviare un messaggio inserisci la tua Groq API Key!");
                 impostaApiKey();
                 return;
             }
@@ -212,16 +212,16 @@
 
             const loadingDiv = document.createElement('div');
             loadingDiv.className = 'msg ai-msg';
-            loadingDiv.textContent = 'Pensando...';
+            loadingDiv.textContent = 'Calcolando...';
             chatBox.appendChild(loadingDiv);
             chatBox.scrollTop = chatBox.scrollHeight;
 
             sendBtn.disabled = true;
 
+            // Modelli scientifici Groq veloci e precisi
             const modelli = [
-                'gemini-3.8-flash',
-                'gemini-1.5-flash-latest',
-                'gemini-1.5-pro-latest'
+                'llama-3.3-70b-versatile',
+                'llama-3.1-8b-instant'
             ];
 
             let rispostaOttenuta = false;
@@ -229,32 +229,44 @@
 
             for (const modello of modelli) {
                 try {
-                    const url = `https://generativelanguage.googleapis.com/v1beta/models/${modello}:generateContent?key=${apiKey}`;
-                    
-                    const response = await fetch(url, {
+                    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${apiKey}`
+                        },
                         body: JSON.stringify({
-                            contents: [{ parts: [{ text: testo }] }]
+                            model: modello,
+                            messages: [
+                                {
+                                    role: 'system',
+                                    content: 'Sei un assistente scientifico e scolastico preciso, chiaro e conciso. Mostra i passaggi chiave nei calcoli matematici/fisici e sii diretto.'
+                                },
+                                {
+                                    role: 'user',
+                                    content: testo
+                                }
+                            ],
+                            temperature: 0.2
                         })
                     });
 
                     const data = await response.json();
 
-                    if (response.ok && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts[0].text) {
-                        loadingDiv.textContent = data.candidates[0].content.parts[0].text;
+                    if (response.ok && data.choices && data.choices[0] && data.choices[0].message) {
+                        loadingDiv.textContent = data.choices[0].message.content;
                         rispostaOttenuta = true;
                         break;
                     } else if (data.error) {
-                        dettaglioErrore = data.error.message || 'Errore del server.';
+                        dettaglioErrore = data.error.message || 'Errore di risposta.';
                     }
                 } catch (err) {
-                    dettaglioErrore = 'Errore di connessione alla rete.';
+                    dettaglioErrore = 'Errore di connessione.';
                 }
             }
 
             if (!rispostaOttenuta) {
-                loadingDiv.textContent = "Servizio momentaneamente non disponibile. Dettaglio: " + dettaglioErrore;
+                loadingDiv.textContent = "Errore durante l'elaborazione. Dettaglio: " + dettaglioErrore;
             }
 
             sendBtn.disabled = false;
