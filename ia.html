@@ -136,6 +136,11 @@
             border: 1px solid #374151;
         }
 
+        .ai-msg strong {
+            color: #38bdf8;
+            font-weight: bold;
+        }
+
         .input-row {
             display: flex;
             gap: 10px;
@@ -201,7 +206,7 @@
     <script>
         const systemPrompt = {
             role: 'system',
-            content: 'Sei un assistente scientifico e scolastico preciso e rigoroso. Usa la formattazione LaTeX (come \\( ... \\) o \\[ ... \\] e \\frac{}{}) per tutte le formule, equazioni e frazioni in modo che vengano renderizzate correttamente. IMPORTANTE: Non generare mai tabelle Markdown con barre verticali (|). Per confronti o differenze usa invece elenchi puntati chiari con titoli in grassetto per rendere il testo sempre ordinato e leggibile. Agisci come un professore di seconda liceo scientifico. '
+            content: 'Sei un assistente scientifico e scolastico preciso e rigoroso. Usa la formattazione LaTeX (come \\( ... \\) o \\[ ... \\] e \\frac{}{}) per tutte le formule, equazioni e frazioni in modo che vengano renderizzate correttamente. IMPORTANTE: Non generare mai tabelle Markdown con barre verticali (|). Per confronti o differenze usa invece elenchi puntati chiari con titoli in grassetto (usando i doppi asterischi, es. **Titolo:**) per rendere il testo sempre ordinato e leggibile. Agisci come un professore di seconda liceo scientifico.'
         };
 
         let cronologia = [systemPrompt];
@@ -236,6 +241,15 @@
                     throwOnError: false
                 });
             }
+        }
+
+        // Funzione per convertire il markdown del grassetto (**testo**) in HTML pulito
+        function formattaGrassetto(testo) {
+            let safe = testo
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;");
+            return safe.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
         }
 
         function ottieniMessaggiOttimizzati() {
@@ -308,7 +322,9 @@
 
                     if (response.ok && data.choices && data.choices[0] && data.choices[0].message) {
                         const rispostaIA = data.choices[0].message.content;
-                        loadingDiv.textContent = rispostaIA;
+                        
+                        // Converte il grassetto in HTML e stampa il messaggio
+                        loadingDiv.innerHTML = formattaGrassetto(rispostaIA);
 
                         cronologia.push({ role: 'assistant', content: rispostaIA });
 
