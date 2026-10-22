@@ -7,13 +7,10 @@
     <link href="https://i.postimg.cc/MGJgF2VH/foto.png" rel="icon" type="image/png">
     <link rel="apple-touch-icon" href="https://i.postimg.cc/MGJgF2VH/foto.png">
     
-    <!-- KaTeX per le formule matematiche -->
+    <!-- Libreria KaTeX per il rendering perfetto delle formule scientifiche -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" onload="renderMath()"></script>
-
-    <!-- Marked.js per convertire tabelle e markdown -->
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
     <style>
         * {
@@ -114,27 +111,9 @@
             border-radius: 12px;
             font-size: 0.95rem;
             line-height: 1.5;
+            white-space: pre-wrap;
             word-break: break-word;
             animation: fadeIn 0.2s ease-out;
-        }
-
-        /* Stile grafico per le tabelle */
-        .ai-msg table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 10px 0;
-            font-size: 0.85rem;
-        }
-
-        .ai-msg th, .ai-msg td {
-            border: 1px solid #374151;
-            padding: 6px 8px;
-            text-align: left;
-        }
-
-        .ai-msg th {
-            background-color: #1f2937;
-            color: #38bdf8;
         }
 
         @keyframes fadeIn {
@@ -147,7 +126,6 @@
             background: #0284c7;
             color: #ffffff;
             border-bottom-right-radius: 2px;
-            white-space: pre-wrap;
         }
 
         .ai-msg {
@@ -211,7 +189,7 @@
         </div>
 
         <div id="chat" class="chat-box">
-            <div class="msg ai-msg">Ciao! Sono la tua IA scientifica. Adesso sia le tabelle che le frazioni in LaTeX funzionano insieme!</div>
+            <div class="msg ai-msg">Ciao! Sono la tua IA scientifica. Chiedimi pure formule, problemi o spiegazioni.</div>
         </div>
 
         <div class="input-row">
@@ -223,13 +201,7 @@
     <script>
         const systemPrompt = {
             role: 'system',
-            content: `Sei un assistente scientifico e scolastico rigoroso.
-REGOLA FONDAMENTALE LATEX: Per OGNI formula, frazione, equazione o notazione chimica/fisica DEVIOBBLIGATORIAMENTE usare LaTeX racchiuso tra \\( ... \\) per le formule nel testo o \\[ ... \\] per le formule uscite.
-Esempi tassativi:
-- Frazione: \\( \\frac{a}{b} \\)
-- Velocità: \\( v = \\frac{\\Delta s}{\\Delta t} \\)
-- Chimica: \\( H_2O \\)
-Non scrivere MAI frazioni come a/b. Se devi fare confronti, usa tabelle Markdown.`
+            content: 'Sei un assistente scientifico e scolastico preciso e rigoroso. Usa la formattazione LaTeX (come \\( ... \\) o \\[ ... \\] e \\frac{}{}) per tutte le formule, equazioni e frazioni in modo che vengano renderizzate correttamente. IMPORTANTE: Non generare mai tabelle Markdown con barre verticali (|). Per confronti o differenze usa invece elenchi puntati chiari con titoli in grassetto per rendere il testo sempre ordinato e leggibile.'
         };
 
         let cronologia = [systemPrompt];
@@ -328,7 +300,7 @@ Non scrivere MAI frazioni come a/b. Se devi fare confronti, usa tabelle Markdown
                         body: JSON.stringify({
                             model: modello,
                             messages: ottieniMessaggiOttimizzati(),
-                            temperature: 0.1
+                            temperature: 0.2
                         })
                     });
 
@@ -336,13 +308,10 @@ Non scrivere MAI frazioni come a/b. Se devi fare confronti, usa tabelle Markdown
 
                     if (response.ok && data.choices && data.choices[0] && data.choices[0].message) {
                         const rispostaIA = data.choices[0].message.content;
-                        
-                        // Renderizza prima il Markdown per tabelle/testo
-                        loadingDiv.innerHTML = marked.parse(rispostaIA);
+                        loadingDiv.textContent = rispostaIA;
 
                         cronologia.push({ role: 'assistant', content: rispostaIA });
 
-                        // Poi applica KaTeX sopra l'HTML generato
                         renderMath();
                         rispostaOttenuta = true;
                         break;
@@ -355,7 +324,7 @@ Non scrivere MAI frazioni come a/b. Se devi fare confronti, usa tabelle Markdown
             }
 
             if (!rispostaOttenuta) {
-                loadingDiv.textContent = "Errore durante l'elaborazione: " + dettaglioErrore;
+                loadingDiv.textContent = "Errore durante l'elaborazione. Dettaglio: " + dettaglioErrore;
                 cronologia.pop();
             }
 
