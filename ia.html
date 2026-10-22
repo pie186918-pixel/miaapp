@@ -211,7 +211,7 @@
         </div>
 
         <div id="chat" class="chat-box">
-            <div class="msg ai-msg">Ciao! Sono la tua IA scientifica. Adesso posso mostrarti tabelle di confronto perfette!</div>
+            <div class="msg ai-msg">Ciao! Sono la tua IA scientifica pronta con LaTeX e tabelle.</div>
         </div>
 
         <div class="input-row">
@@ -223,7 +223,15 @@
     <script>
         const systemPrompt = {
             role: 'system',
-            content: 'Sei un assistente scientifico e scolastico preciso e rigoroso. Usa la formattazione LaTeX (come \\( ... \\) o \\[ ... \\] e \\frac{}{}) per tutte le formule, equazioni e frazioni in modo che vengano renderizzate correttamente.Quando devi confrontare concetti, proprietà o legami chimici, usa tabelle in formato Markdown chiare e pulite.Agisci come un professore di seconda liceo scientifico con risposte chiare e non troppo lunghe'
+            content: `Sei un assistente scientifico e scolastico rigoroso. 
+REGOLA OBBLIGATORIA SUL LATEX: Devi SEMPRE utilizzare la sintassi LaTeX per qualsiasi formula, frazione o espressione matematica/chimica.
+Usa i delimitatori \\( ... \\) per le formule in linea e \\[ ... \\] per le formule isolate.
+ESEMPI DI COME DEVI SCRIVERE:
+- Frazioni: \\( \\frac{a}{b} \\)
+- Velocità: \\( v = \\frac{\\Delta s}{\\Delta t} \\)
+- Chimica: \\( H_2O \\)
+Non scrivere mai formule senza questi tag LaTeX. Quando devi confrontare concetti, usa tabelle in formato Markdown pulite.
+Agisci come un professore di seconda liceo scientifico con risposte chiare e non troppo lunghe`
         };
 
         let cronologia = [systemPrompt];
@@ -331,7 +339,7 @@
                     if (response.ok && data.choices && data.choices[0] && data.choices[0].message) {
                         const rispostaIA = data.choices[0].message.content;
                         
-                        // Converte il markdown (incluse le tabelle) in HTML formattato
+                        // Converte il markdown (tabelle e testo) in HTML e applica KaTeX
                         loadingDiv.innerHTML = marked.parse(rispostaIA);
 
                         cronologia.push({ role: 'assistant', content: rispostaIA });
