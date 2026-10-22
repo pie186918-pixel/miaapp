@@ -6,6 +6,12 @@
     <title>Assistente IA - Omnia</title>
     <link href="https://i.postimg.cc/MGJgF2VH/foto.png" rel="icon" type="image/png">
     <link rel="apple-touch-icon" href="https://i.postimg.cc/MGJgF2VH/foto.png">
+    
+    <!-- Inclusione della libreria KaTeX per formule matematiche perfette -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" onload="renderMath()"></script>
+
     <style>
         * {
             box-sizing: border-box;
@@ -89,7 +95,7 @@
             padding: 10px 14px;
             border-radius: 12px;
             font-size: 0.95rem;
-            line-height: 1.4;
+            line-height: 1.5;
             white-space: pre-wrap;
             word-break: break-word;
             animation: fadeIn 0.2s ease-out;
@@ -165,7 +171,7 @@
         </div>
 
         <div id="chat" class="chat-box">
-            <div class="msg ai-msg">Ciao! Sono la tua IA scientifica ultra-veloce. Fammi pure domande su formule, problemi o teoria.</div>
+            <div class="msg ai-msg">Ciao! Sono la tua IA scientifica. Formule e frazioni verranno formattate automaticamente.</div>
         </div>
 
         <div class="input-row">
@@ -184,6 +190,21 @@
             if (key !== null) {
                 localStorage.setItem('omnia_groq_key', key.trim());
                 alert("API Key Groq salvata sul tuo dispositivo!");
+            }
+        }
+
+        // Funzione per attivare il motore KaTeX sui messaggi IA
+        function renderMath() {
+            if (typeof renderMathInElement === 'function') {
+                renderMathInElement(document.body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$', right: '$', display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
             }
         }
 
@@ -218,7 +239,6 @@
 
             sendBtn.disabled = true;
 
-            // Modelli aggiornati e supportati su Groq
             const modelli = [
                 'openai/gpt-oss-120b',
                 'openai/gpt-oss-20b'
@@ -240,7 +260,7 @@
                             messages: [
                                 {
                                     role: 'system',
-                                    content: 'Sei un assistente scientifico e scolastico preciso, chiaro e conciso. Mostra i passaggi chiave nei calcoli matematici/fisici e sii diretto.'
+                                    content: 'Sei un assistente scientifico e scolastico preciso e rigoroso. Usa la formattazione LaTeX (come \\( ... \\) o \\[ ... \\] e \\frac{}{}) per tutte le formule, equazioni e frazioni in modo che vengano renderizzate correttamente.'
                                 },
                                 {
                                     role: 'user',
@@ -255,6 +275,8 @@
 
                     if (response.ok && data.choices && data.choices[0] && data.choices[0].message) {
                         loadingDiv.textContent = data.choices[0].message.content;
+                        // Applica il rendering matematico KaTeX sul testo appena inserito
+                        renderMath();
                         rispostaOttenuta = true;
                         break;
                     } else if (data.error) {
