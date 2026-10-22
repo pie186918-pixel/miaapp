@@ -72,7 +72,6 @@
             cursor: pointer;
         }
 
-        /* Area di chat leggera */
         .chat-box {
             flex: 1;
             overflow-y: auto;
@@ -110,7 +109,6 @@
             border: 1px solid #374151;
         }
 
-        /* Area Input */
         .input-row {
             display: flex;
             gap: 10px;
@@ -160,12 +158,10 @@
             <button class="key-btn" onclick="impostaApiKey()">API Key</button>
         </div>
 
-        <!-- Finestra della Chat -->
         <div id="chat" class="chat-box">
             <div class="msg ai-msg">Ciao! Sono la tua IA integrata in Omnia. Inviami pure una domanda.</div>
         </div>
 
-        <!-- Input e Invio -->
         <div class="input-row">
             <textarea id="user-input" placeholder="Scrivi un messaggio..."></textarea>
             <button id="send-btn" class="btn-send" onclick="inviaMessaggio()">Invia</button>
@@ -173,7 +169,6 @@
     </div>
 
     <script>
-        // Gestione API Key memorizzata nel browser per sicurezza
         function getApiKey() {
             return localStorage.getItem('omnia_gemini_key') || '';
         }
@@ -201,7 +196,6 @@
             const testo = inputArea.value.trim();
             if (!testo) return;
 
-            // Mostra messaggio utente nella chat
             const userDiv = document.createElement('div');
             userDiv.className = 'msg user-msg';
             userDiv.textContent = testo;
@@ -210,7 +204,6 @@
             inputArea.value = '';
             chatBox.scrollTop = chatBox.scrollHeight;
 
-            // Inserisci indicatore di caricamento
             const loadingDiv = document.createElement('div');
             loadingDiv.className = 'msg ai-msg';
             loadingDiv.textContent = 'Pensando...';
@@ -220,7 +213,6 @@
             sendBtn.disabled = true;
 
             try {
-                // Chiamata ultra-leggera diretta alle API di Gemini
                 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
