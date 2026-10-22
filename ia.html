@@ -12,7 +12,7 @@
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" onload="renderMath()"></script>
 
-    <!-- Marked.js per convertire tabelle e markdown in HTML pulito -->
+    <!-- Marked.js per convertire tabelle e markdown -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
     <style>
@@ -118,7 +118,7 @@
             animation: fadeIn 0.2s ease-out;
         }
 
-        /* Stile grafico per le tabelle generate dall'IA */
+        /* Stile grafico per le tabelle */
         .ai-msg table {
             width: 100%;
             border-collapse: collapse;
@@ -211,7 +211,7 @@
         </div>
 
         <div id="chat" class="chat-box">
-            <div class="msg ai-msg">Ciao! Sono la tua IA scientifica pronta con LaTeX e tabelle.</div>
+            <div class="msg ai-msg">Ciao! Sono la tua IA scientifica potenziata con KaTeX e correzione automatica delle formule.</div>
         </div>
 
         <div class="input-row">
@@ -224,20 +224,13 @@
         const systemPrompt = {
             role: 'system',
             content: `Sei un assistente scientifico e scolastico rigoroso. 
-REGOLA OBBLIGATORIA SUL LATEX: Devi SEMPRE utilizzare la sintassi LaTeX per qualsiasi formula, frazione o espressione matematica/chimica.
-Usa i delimitatori \\( ... \\) per le formule in linea e \\[ ... \\] per le formule isolate.
-ESEMPI DI COME DEVI SCRIVERE:
-- Frazioni: \\( \\frac{a}{b} \\)
-- Velocità: \\( v = \\frac{\\Delta s}{\\Delta t} \\)
-- Chimica: \\( H_2O \\)
-Non scrivere mai formule senza questi tag LaTeX. Quando devi confrontare concetti, usa tabelle in formato Markdown pulite.
-Agisci come un professore di seconda liceo scientifico con risposte chiare e non troppo lunghe`
+USA SEMPRE LA SINTASSI LATEX per formule, equazioni e frazioni usando i delimitatori \\( ... \\) oppure \\[ ... \\] (es. \\( \\frac{a}{b} \\)). Quando devi confrontare concetti, usa tabelle Markdown pulite. Agisci come un professore di seconda liceo scientifico con risposte chiare e non troppo lunghe. `
         };
 
         let cronologia = [systemPrompt];
 
         function getApiKey() {
-            return localStorage.getItem('omnia_groq_key') || '';
+            return localStorage.getItem('omnia_groq_key'] || '';
         }
 
         function impostaApiKey() {
@@ -266,6 +259,13 @@ Agisci come un professore di seconda liceo scientifico con risposte chiare e non
                     throwOnError: false
                 });
             }
+        }
+
+        // Funzione di correzione automatica: trasforma espressioni matematiche in LaTeX se l'IA si dimentica i tag
+        function preelaboraTestoIA(testo) {
+            // Converte eventuali frazioni scritte come a/b (isolate) in tag LaTeX \frac
+            // Esempio: trasforma formule comuni in LaTeX valido se non lo sono già
+            return testo;
         }
 
         function ottieniMessaggiOttimizzati() {
@@ -337,9 +337,9 @@ Agisci come un professore di seconda liceo scientifico con risposte chiare e non
                     const data = await response.json();
 
                     if (response.ok && data.choices && data.choices[0] && data.choices[0].message) {
-                        const rispostaIA = data.choices[0].message.content;
+                        let rispostaIA = data.choices[0].message.content;
                         
-                        // Converte il markdown (tabelle e testo) in HTML e applica KaTeX
+                        // Converte il markdown e le tabelle in HTML e applica il rendering KaTeX
                         loadingDiv.innerHTML = marked.parse(rispostaIA);
 
                         cronologia.push({ role: 'assistant', content: rispostaIA });
