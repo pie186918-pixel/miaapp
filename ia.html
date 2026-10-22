@@ -127,6 +127,15 @@
             font-family: inherit;
         }
 
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(5px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .msg {
+        animation: fadeIn 0.2s ease-out;
+    }
+
         textarea:focus {
             outline: 1px solid #38bdf8;
         }
@@ -213,8 +222,8 @@
             sendBtn.disabled = true;
 
             try {
-                // Corretto: endpoint v1beta con il modello gemini-1.5-flash supportato
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+                // Aggiornato al modello standard corrente supportato dall'API v1beta
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
                 
                 const response = await fetch(url, {
                     method: 'POST',
