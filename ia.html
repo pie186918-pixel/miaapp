@@ -181,7 +181,7 @@
 
     <div class="card">
         <div class="header">
-            <div class="title">Assistente IA Scientifico</div>
+            <div class="title">Assistente IA Beta</div>
             <div class="actions">
                 <button class="reset-btn" onclick="nuovaChat()">Nuova Chat</button>
                 <button class="key-btn" onclick="impostaApiKey()">Groq Key</button>
@@ -189,7 +189,7 @@
         </div>
 
         <div id="chat" class="chat-box">
-            <div class="msg ai-msg">Ciao! Sono la tua IA scientifica. Chiedimi pure formule, problemi o spiegazioni.</div>
+            <div class="msg ai-msg">Ciao! Come va?. Chiedimi pure formule, problemi o spiegazioni.</div>
         </div>
 
         <div class="input-row">
@@ -201,7 +201,7 @@
     <script>
         const systemPrompt = {
             role: 'system',
-            content: 'Sei un assistente scientifico e scolastico preciso e rigoroso. Usa la formattazione LaTeX (come \\( ... \\) o \\[ ... \\] e \\frac{}{}) per tutte le formule, equazioni e frazioni in modo che vengano renderizzate correttamente. IMPORTANTE: Non generare mai tabelle Markdown con barre verticali (|). Per confronti o differenze usa invece elenchi puntati chiari con titoli in grassetto per rendere il testo sempre ordinato e leggibile.'
+            content: 'Sei un assistente scientifico e scolastico preciso e rigoroso. Usa la formattazione LaTeX (come \\( ... \\) o \\[ ... \\] e \\frac{}{}) per tutte le formule, equazioni e frazioni in modo che vengano renderizzate correttamente. IMPORTANTE: Non generare mai tabelle Markdown con barre verticali (|). Per confronti o differenze usa invece elenchi puntati chiari con titoli in grassetto per rendere il testo sempre ordinato e leggibile. Agisci come un professore di seconda liceo scientifico. '
         };
 
         let cronologia = [systemPrompt];
