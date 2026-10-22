@@ -7,10 +7,13 @@
     <link href="https://i.postimg.cc/MGJgF2VH/foto.png" rel="icon" type="image/png">
     <link rel="apple-touch-icon" href="https://i.postimg.cc/MGJgF2VH/foto.png">
     
-    <!-- Libreria KaTeX per il rendering perfetto delle formule scientifiche -->
+    <!-- KaTeX per le formule matematiche -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" onload="renderMath()"></script>
+
+    <!-- Marked.js per convertire tabelle e markdown in HTML pulito -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
     <style>
         * {
@@ -68,10 +71,25 @@
             letter-spacing: 1.5px;
         }
 
+        .actions {
+            display: flex;
+            gap: 8px;
+        }
+
         .key-btn {
             background: #1f2937;
             border: 1px solid #374151;
             color: #38bdf8;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+        .reset-btn {
+            background: #1f2937;
+            border: 1px solid #374151;
+            color: #ef4444;
             padding: 6px 12px;
             border-radius: 8px;
             font-size: 0.8rem;
@@ -96,9 +114,27 @@
             border-radius: 12px;
             font-size: 0.95rem;
             line-height: 1.5;
-            white-space: pre-wrap;
             word-break: break-word;
             animation: fadeIn 0.2s ease-out;
+        }
+
+        /* Stile grafico per le tabelle generate dall'IA */
+        .ai-msg table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+            font-size: 0.85rem;
+        }
+
+        .ai-msg th, .ai-msg td {
+            border: 1px solid #374151;
+            padding: 6px 8px;
+            text-align: left;
+        }
+
+        .ai-msg th {
+            background-color: #1f2937;
+            color: #38bdf8;
         }
 
         @keyframes fadeIn {
@@ -111,6 +147,7 @@
             background: #0284c7;
             color: #ffffff;
             border-bottom-right-radius: 2px;
+            white-space: pre-wrap;
         }
 
         .ai-msg {
@@ -167,11 +204,14 @@
     <div class="card">
         <div class="header">
             <div class="title">Assistente IA Scientifico</div>
-            <button class="key-btn" onclick="impostaApiKey()">Groq Key</button>
+            <div class="actions">
+                <button class="reset-btn" onclick="nuovaChat()">Nuova Chat</button>
+                <button class="key-btn" onclick="impostaApiKey()">Groq Key</button>
+            </div>
         </div>
 
         <div id="chat" class="chat-box">
-            <div class="msg ai-msg">Ciao! Sono la tua IA scientifica. Ho la memoria della chat attiva e posso formattare formule e frazioni.</div>
+            <div class="msg ai-msg">Ciao! Sono la tua IA scientifica. Adesso posso mostrarti tabelle di confronto perfette!</div>
         </div>
 
         <div class="input-row">
@@ -181,12 +221,12 @@
     </div>
 
     <script>
-        let cronologia = [
-            {
-                role: 'system',
-                content: 'Sei un assistente scientifico e scolastico preciso e rigoroso. Usa la formattazione LaTeX (come \\( ... \\) o \\[ ... \\] e \\frac{}{}) per tutte le formule, equazioni e frazioni in modo che vengano renderizzate correttamente. Non devi dare risposte troppo lunghe. Devi agire come un professore al liceo scientifico in seconda.'
-            }
-        ];
+        const systemPrompt = {
+            role: 'system',
+            content: 'Sei un assistente scientifico e scolastico preciso e rigoroso. Usa la formattazione LaTeX per formule e frazioni. Quando devi confrontare concetti, proprietà o legami chimici, usa tabelle in formato Markdown chiare e pulite.Agisci come un professore di seconda liceo scientifico con risposte chiare e non troppo lunghe'
+        };
+
+        let cronologia = [systemPrompt];
 
         function getApiKey() {
             return localStorage.getItem('omnia_groq_key') || '';
@@ -198,6 +238,12 @@
                 localStorage.setItem('omnia_groq_key', key.trim());
                 alert("API Key Groq salvata sul tuo dispositivo!");
             }
+        }
+
+        function nuovaChat() {
+            cronologia = [systemPrompt];
+            const chatBox = document.getElementById('chat');
+            chatBox.innerHTML = '<div class="msg ai-msg">Nuova chat avviata! Fammi una domanda.</div>';
         }
 
         function renderMath() {
@@ -212,6 +258,16 @@
                     throwOnError: false
                 });
             }
+        }
+
+        function ottieniMessaggiOttimizzati() {
+            const maxMessaggiStorico = 6;
+            const messaggiRecenti = cronologia.slice(-maxMessaggiStorico);
+            
+            if (messaggiRecenti[0].role !== 'system') {
+                return [systemPrompt, ...messaggiRecenti];
+            }
+            return messaggiRecenti;
         }
 
         async function inviaMessaggio() {
@@ -265,7 +321,7 @@
                         },
                         body: JSON.stringify({
                             model: modello,
-                            messages: cronologia,
+                            messages: ottieniMessaggiOttimizzati(),
                             temperature: 0.2
                         })
                     });
@@ -274,7 +330,9 @@
 
                     if (response.ok && data.choices && data.choices[0] && data.choices[0].message) {
                         const rispostaIA = data.choices[0].message.content;
-                        loadingDiv.textContent = rispostaIA;
+                        
+                        // Converte il markdown (incluse le tabelle) in HTML formattato
+                        loadingDiv.innerHTML = marked.parse(rispostaIA);
 
                         cronologia.push({ role: 'assistant', content: rispostaIA });
 
@@ -290,7 +348,7 @@
             }
 
             if (!rispostaOttenuta) {
-                loadingDiv.textContent = "Errore durante l'elaborazione. Dettaglio: " + dettaglioErrore;
+                loadingDiv.textContent = "Errore durante l'elaborazione: " + dettaglioErrore;
                 cronologia.pop();
             }
 
