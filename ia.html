@@ -211,7 +211,7 @@
         </div>
 
         <div id="chat" class="chat-box">
-            <div class="msg ai-msg">Ciao! Sono la tua IA scientifica. I pulsanti sono di nuovo attivi!</div>
+            <div class="msg ai-msg">Ciao! Sono la tua IA scientifica. Adesso sia le tabelle che le frazioni in LaTeX funzionano insieme!</div>
         </div>
 
         <div class="input-row">
@@ -223,8 +223,13 @@
     <script>
         const systemPrompt = {
             role: 'system',
-            content: `Sei un assistente scientifico e scolastico rigoroso. 
-USA SEMPRE LA SINTASSI LATEX per formule, equazioni e frazioni usando i delimitatori \\( ... \\) oppure \\[ ... \\] (es. \\( \\frac{a}{b} \\)). Quando devi confrontare concetti, usa tabelle Markdown pulite.`
+            content: `Sei un assistente scientifico e scolastico rigoroso.
+REGOLA FONDAMENTALE LATEX: Per OGNI formula, frazione, equazione o notazione chimica/fisica DEVIOBBLIGATORIAMENTE usare LaTeX racchiuso tra \\( ... \\) per le formule nel testo o \\[ ... \\] per le formule uscite.
+Esempi tassativi:
+- Frazione: \\( \\frac{a}{b} \\)
+- Velocità: \\( v = \\frac{\\Delta s}{\\Delta t} \\)
+- Chimica: \\( H_2O \\)
+Non scrivere MAI frazioni come a/b. Se devi fare confronti, usa tabelle Markdown.`
         };
 
         let cronologia = [systemPrompt];
@@ -323,7 +328,7 @@ USA SEMPRE LA SINTASSI LATEX per formule, equazioni e frazioni usando i delimita
                         body: JSON.stringify({
                             model: modello,
                             messages: ottieniMessaggiOttimizzati(),
-                            temperature: 0.2
+                            temperature: 0.1
                         })
                     });
 
@@ -332,10 +337,12 @@ USA SEMPRE LA SINTASSI LATEX per formule, equazioni e frazioni usando i delimita
                     if (response.ok && data.choices && data.choices[0] && data.choices[0].message) {
                         const rispostaIA = data.choices[0].message.content;
                         
+                        // Renderizza prima il Markdown per tabelle/testo
                         loadingDiv.innerHTML = marked.parse(rispostaIA);
 
                         cronologia.push({ role: 'assistant', content: rispostaIA });
 
+                        // Poi applica KaTeX sopra l'HTML generato
                         renderMath();
                         rispostaOttenuta = true;
                         break;
