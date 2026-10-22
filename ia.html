@@ -218,7 +218,6 @@
 
             sendBtn.disabled = true;
 
-            // Elenco di modelli da provare in sequenza automatica
             const modelli = [
                 'gemini-3.8-flash',
                 'gemini-1.5-flash-latest',
@@ -226,7 +225,7 @@
             ];
 
             let rispostaOttenuta = false;
-            let ultimoErrore = '';
+            let dettaglioErrore = '';
 
             for (const modello of modelli) {
                 try {
@@ -242,20 +241,20 @@
 
                     const data = await response.json();
 
-                    if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts[0].text) {
+                    if (response.ok && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts[0].text) {
                         loadingDiv.textContent = data.candidates[0].content.parts[0].text;
                         rispostaOttenuta = true;
-                        break; // Esce dal ciclo non appena trova una risposta valida
+                        break;
                     } else if (data.error) {
-                        ultimoErrore = data.error.message || 'Errore di risposta del server.';
+                        dettaglioErrore = data.error.message || 'Errore del server.';
                     }
                 } catch (err) {
-                    ultimoErrore = 'Errore di connessione alla rete.';
+                    dettaglioErrore = 'Errore di connessione alla rete.';
                 }
             }
 
             if (!rispostaOttenuta) {
-                loadingDiv.textContent = "Server temporaneamente occupati su tutti i modelli. Riprova tra pochissimo. (" + ultimoErrore + ")";
+                loadingDiv.textContent = "Servizio momentaneamente non disponibile. Dettaglio: " + dettaglioErrore;
             }
 
             sendBtn.disabled = false;
