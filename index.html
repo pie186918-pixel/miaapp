@@ -96,6 +96,41 @@
         <h2>Insegnanti</h2>
         <p>Risorse utili.</p>
     </a>
+
+    <!-- Bottone per l'area riservata -->
+<button onclick="verificaPassword()" class="protected-btn">🔐 Area Riservata</button>
+
+<style>
+    .protected-btn {
+        background: #1f2937;
+        border: 1px solid #374151;
+        color: #38bdf8;
+        padding: 10px 18px;
+        border-radius: 10px;
+        font-size: 0.95rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    .protected-btn:hover {
+        background: #374151;
+    }
+</style>
+
+<script>
+    function verificaPassword() {
+        // Inserisci qui la password che desideri impostare
+        const passwordCorretta = "omnia123";
+        const inserita = prompt("Inserisci la password di accesso:");
+        
+        if (inserita === passwordCorretta) {
+            // Sostituisci 'pagina-segreta.html' con il percorso del file che vuoi aprire
+            window.location.href = "pagina-segreta.html";
+        } else if (inserita !== null) {
+            alert("Password errata!");
+        }
+    }
+</script>
     
     <!-- Banner che compare dinamicamente -->
     <div id="shortcut-banner" style="display: none;"></div>
