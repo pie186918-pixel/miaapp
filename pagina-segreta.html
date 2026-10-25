@@ -1,0 +1,169 @@
+<!DOCTYPE html> 
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risorse - Omnia</title>
+    <link href="https://i.postimg.cc/MGJgF2VH/foto.png" rel="icon" type="image/png">
+    <link rel="apple-touch-icon" href="https://i.postimg.cc/MGJgF2VH/foto.png">
+    <style>
+        /* Stile coerente con il tema scuro e glassmorphism di Omnia */
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #0f172a;
+            background-image: radial-gradient(circle at 50% 0%, #1e293b 0%, #0f172a 100%);
+            color: #f8fafc;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        h1 {
+            text-align: center;
+            color: #ffffff;
+            font-size: 2.2rem;
+            margin-bottom: 30px;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 20px;
+            text-decoration: none;
+            color: #38bdf8;
+            font-weight: 600;
+        }
+
+        .back-btn:hover {
+            opacity: 0.8;
+        }
+
+        /* Schede in vetro sfocato */
+        .card {
+            display: block;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 18px 22px;
+            margin-bottom: 16px;
+            text-decoration: none;
+            color: inherit;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        h2 {
+            margin: 0 0 6px 0;
+            font-size: 1.25rem;
+            color: #38bdf8;
+        }
+
+        p {
+            margin: 0;
+            font-size: 0.95rem;
+            color: #cbd5e1;
+        }
+
+        /* Contenitore per lo Schermo Intero */
+        .image-modal {
+            display: none;
+            position: fixed;
+            z-index: 99999;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #000000;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        /* L'immagine riempie l'intero schermo */
+        .image-modal img {
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover; /* Copre ogni singolo pixel dello schermo */
+        }
+    </style>
+</head>
+<body>
+
+    <a href="index.html" class="back-btn">← Torna indietro</a>
+
+    <h1>Risorse</h1>
+
+    <!-- Bottone 1: Registro -->
+    <a href="https://www.portaleargo.it/auth/sso/login/?login_challenge=59fa1a97a9a145f3a48c2bce2cc8ebed" class="card" target="_blank">
+        <h2>Registro</h2>
+        <p>Collegamento al portale Argo.</p>
+    </a>
+
+    <!-- Bottone 2: Sfondo Lavagna -->
+    <a href="#" class="card" onclick="apriImmagine('sl_072622_51930_13.jpg'); return false;">
+        <h2>Sfondo Lavagna</h2>
+        <p>Visualizza lo sfondo a quadretti a schermo intero.</p>
+    </a>
+
+    <!-- Bottone 3: Terzo Link -->
+    <a href="timer.html" class="card" >
+        <h2>Ora esatta</h2>
+        <p>Ora italiana.</p>
+    </a>
+
+    <a href="random.html" class="card">
+        <h2>Estrazione Numerica</h2>
+        <p>Estrai un numero causale personalizzato entro un intervallo.</p>
+    </a>
+
+     <a href="ia.html" class="card">
+        <h2>Intelligenza artificiale</h2>
+        <p>Versione 1 di intelligenza artificiale leggera e veloce.</p>
+    </a>
+    
+    <!-- Overlay Schermo Intero -->
+    <div id="image-modal" class="image-modal" onclick="chiudiImmagine()">
+        <img id="modal-img" src="" alt="Sfondo Lavagna">
+    </div>
+
+    <script>
+        function apriImmagine(url) {
+            const modal = document.getElementById('image-modal');
+            const img = document.getElementById('modal-img');
+            img.src = url;
+            modal.style.display = 'flex';
+
+            // Attiva la modalità schermo intero nativa del browser
+            if (modal.requestFullscreen) {
+                modal.requestFullscreen();
+            } else if (modal.webkitRequestFullscreen) {
+                modal.webkitRequestFullscreen();
+            } else if (modal.msRequestFullscreen) {
+                modal.msRequestFullscreen();
+            }
+        }
+
+        function chiudiImmagine() {
+            const modal = document.getElementById('image-modal');
+            modal.style.display = 'none';
+
+            // Esce dallo schermo intero nativo
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            }
+        }
+    </script>
+
+</body>
+</html>
