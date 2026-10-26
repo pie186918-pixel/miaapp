@@ -475,7 +475,7 @@
             container.innerHTML = "<p style='color: #9ca3af;'>Caricamento foto in corso...</p>";
 
             try {
-                const wikiUrl = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(ultimaQuery)}&gsrnamespace=6&gsrlimit=50&prop=imageinfo&iiprop=url&format=json&origin=*`;
+                const wikiUrl = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(ultimaQuery)}&gsrnamespace=6&gsrlimit=30&prop=imageinfo&iiprop=url&format=json&origin=*`;
                 
                 const response = await fetch(wikiUrl);
                 const data = await response.json();
