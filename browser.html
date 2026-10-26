@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Omnia - Browser Interno</title>
+    <title>Omnia - Workspace</title>
     <style>
         * {
             box-sizing: border-box;
@@ -18,6 +18,7 @@
             height: 100vh;
             padding: 12px;
             overflow: hidden;
+            position: relative;
         }
 
         /* Layout 2 Colonne Affiancate */
@@ -26,6 +27,7 @@
             grid-template-columns: 1fr 1fr;
             gap: 12px;
             height: 100%;
+            transition: all 0.3s ease;
         }
 
         .pane {
@@ -36,6 +38,7 @@
             flex-direction: column;
             overflow: hidden;
             padding: 15px;
+            position: relative;
         }
 
         .pane-title {
@@ -82,6 +85,25 @@
 
         .search-btn:hover {
             background: #0369a1;
+        }
+
+        /* Pulsante IA speciale accanto a Cerca */
+        .ia-open-btn {
+            background: #8b5cf6;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.2s;
+        }
+
+        .ia-open-btn:hover {
+            background: #7c3aed;
         }
 
         /* Cronologia */
@@ -134,7 +156,7 @@
             border-color: #0284c7;
         }
 
-        /* Contenitore Risultati e Browser Interno */
+        /* Contenitore Risultati */
         .results-container {
             flex: 1;
             overflow-y: auto;
@@ -171,7 +193,7 @@
             line-height: 1.4;
         }
 
-        /* Mini-Browser Interno (Iframe nascosto di default) */
+        /* Mini-Browser Interno */
         #internalBrowserWrapper {
             display: none;
             flex-direction: column;
@@ -254,7 +276,52 @@
             text-overflow: ellipsis;
         }
 
-        /* Frame IA */
+        /* Pane IA con supporto Sovrapposizione Schermo Intero */
+        .ia-pane {
+            padding: 0;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .ia-pane.fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 9999;
+            border-radius: 0;
+            border: none;
+        }
+
+        /* Barra superiore IA per chiusura Fullscreen */
+        .ia-fullscreen-bar {
+            display: none;
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            z-index: 10000;
+        }
+
+        .ia-pane.fullscreen .ia-fullscreen-bar {
+            display: block;
+        }
+
+        .close-ia-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+        }
+
+        .close-ia-btn:hover {
+            background: #dc2626;
+        }
+
         .ia-frame {
             width: 100%;
             height: 100%;
@@ -281,6 +348,9 @@
             
             <div class="search-box" id="searchBoxArea">
                 <input type="text" id="searchInput" class="search-input" placeholder="Cerca argomento o sito..." onkeydown="if(event.key==='Enter') avviaRicerca(document.getElementById('searchInput').value)">
+                
+                <!-- Pulsante IA posizionato alla sinistra di CERCA -->
+                <button onclick="apriIAFullscreen()" class="ia-open-btn" title="Apri l'IA a Schermo Intero">🤖 IA</button>
                 <button onclick="avviaRicerca(document.getElementById('searchInput').value)" class="search-btn">Cerca</button>
             </div>
 
@@ -291,12 +361,12 @@
                 <button class="view-btn" id="btnFoto" onclick="mostraFoto()">🖼️ Foto Reali</button>
             </div>
 
-            <!-- CONTENITORE PRINCIPALE (Risultati o Mini-Browser) -->
+            <!-- CONTENITORE PRINCIPALE -->
             <div id="resultsList" class="results-container">
                 <p style="color: #6b7280; font-size: 0.9rem;">Digita una ricerca per visualizzare i risultati a schermo.</p>
             </div>
 
-            <!-- MINI-BROWSER INTERNO (Mostrato al click su un sito o foto) -->
+            <!-- MINI-BROWSER INTERNO -->
             <div id="internalBrowserWrapper">
                 <div class="browser-toolbar">
                     <button class="back-btn" onclick="chiudiBrowserInterno()">← Torna ai risultati</button>
@@ -307,7 +377,10 @@
         </div>
 
         <!-- COLONNA DESTRA: IA -->
-        <div class="pane" style="padding: 0;">
+        <div class="pane ia-pane" id="iaPane">
+            <div class="ia-fullscreen-bar">
+                <button onclick="chiudiIAFullscreen()" class="close-ia-btn">✕ Chiudi IA</button>
+            </div>
             <iframe src="ia.html" class="ia-frame"></iframe>
         </div>
 
@@ -318,6 +391,14 @@
         let cacheSitiHtml = "";
 
         document.addEventListener("DOMContentLoaded", aggiornaCronologiaUI);
+
+        function apriIAFullscreen() {
+            document.getElementById("iaPane").classList.add("fullscreen");
+        }
+
+        function chiudiIAFullscreen() {
+            document.getElementById("iaPane").classList.remove("fullscreen");
+        }
 
         async function avviaRicerca(queryTesto) {
             const query = queryTesto.trim();
