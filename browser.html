@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Omnia - Advanced Workspace</title>
+    <title>Omnia - Fast Workspace</title>
     <style>
         * {
             box-sizing: border-box;
@@ -84,7 +84,7 @@
             background: #0369a1;
         }
 
-        /* Sezione Cronologia Ricerche Recenti */
+        /* Cronologia */
         .history-bar {
             display: flex;
             gap: 6px;
@@ -119,7 +119,7 @@
             color: #fff;
         }
 
-        /* Pulsanti di cambio vista (Siti / Foto) */
+        /* Pulsanti di cambio vista */
         .view-switcher {
             display: none;
             gap: 8px;
@@ -193,7 +193,7 @@
             line-height: 1.4;
         }
 
-        /* Griglia Immagini Avanzata */
+        /* Griglia Immagini */
         .image-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -245,10 +245,10 @@
 
     <div class="workspace">
         
-        <!-- COLONNA SINISTRA: BROWSER AVANZATO WEB & FOTO -->
+        <!-- COLONNA SINISTRA -->
         <div class="pane">
             <div class="pane-title">
-                <span>🌐 Omnia Browser v3.0</span>
+                <span>🌐 Omnia Browser Turbo</span>
             </div>
             
             <div class="search-box">
@@ -256,21 +256,19 @@
                 <button onclick="avviaRicerca(document.getElementById('searchInput').value)" class="search-btn">Cerca</button>
             </div>
 
-            <!-- Cronologia Ricerche Recenti -->
             <div class="history-bar" id="historyBar"></div>
 
-            <!-- Pulsanti di cambio vista (Siti / Foto) -->
             <div class="view-switcher" id="viewSwitcher">
                 <button class="view-btn active" id="btnWeb" onclick="mostraSitiWeb()">🌐 Siti Web</button>
                 <button class="view-btn" id="btnFoto" onclick="mostraFoto()">🖼️ Foto Reali</button>
             </div>
 
             <div id="resultsList" class="results-container">
-                <p style="color: #6b7280; font-size: 0.9rem;">Digita una parola o seleziona una ricerca recente per iniziare.</p>
+                <p style="color: #6b7280; font-size: 0.9rem;">Digita una parola o seleziona una ricerca recente.</p>
             </div>
         </div>
 
-        <!-- COLONNA DESTRA: LA TUA IA (ia.html) -->
+        <!-- COLONNA DESTRA: IA -->
         <div class="pane" style="padding: 0;">
             <iframe src="ia.html" class="ia-frame"></iframe>
         </div>
@@ -281,7 +279,6 @@
         let ultimaQuery = "";
         let cacheSitiHtml = "";
 
-        // Carica la cronologia all'avvio
         document.addEventListener("DOMContentLoaded", aggiornaCronologiaUI);
 
         async function avviaRicerca(queryTesto) {
@@ -293,27 +290,24 @@
             salvaCronologia(query);
 
             const container = document.getElementById("resultsList");
-            container.innerHTML = "<p style='color: #9ca3af;'>Ricerca in corso...</p>";
+            container.innerHTML = "<p style='color: #9ca3af;'>Ricerca rapida in corso...</p>";
             document.getElementById("viewSwitcher").style.display = "flex";
             document.getElementById("btnWeb").classList.add("active");
             document.getElementById("btnFoto").classList.remove("active");
 
             try {
-                const proxyUrl = `https://api.allorigins.win/get?url=` + encodeURIComponent(`https://html.duckduckgo.com/html/?q=${encodeURIComponent(query)}`);
-                const response = await fetch(proxyUrl);
-                const data = await response.json();
-
-                if (!data.contents) throw new Error("Errore di caricamento");
+                // Sostituiamo il proxy lento con un recupero diretto ed efficiente
+                const response = await fetch(`https://html.duckduckgo.com/html/?q=${encodeURIComponent(query)}`, { mode: 'cors' });
+                const htmlText = await response.text();
 
                 const parser = new DOMParser();
-                const doc = parser.parseFromString(data.contents, 'text/html');
+                const doc = parser.parseFromString(htmlText, 'text/html');
                 const results = doc.querySelectorAll('.result');
 
                 let htmlContent = "";
 
                 if (!results || results.length === 0) {
-                    container.innerHTML = "<p style='color: #9ca3af;'>Nessun risultato trovato.</p>";
-                    return;
+                    throw new Error("Nessun risultato");
                 }
 
                 results.forEach(el => {
@@ -331,13 +325,10 @@
                             if (match) cleanUrl = decodeURIComponent(match[1]);
                         }
 
-                        // Estrae il dominio per ricavare la favicon ufficiale
-                        let domain = "";
+                        let domain = "google.com";
                         try {
                             domain = new URL(cleanUrl).hostname;
-                        } catch (e) {
-                            domain = "google.com";
-                        }
+                        } catch (e) {}
                         const faviconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=32`;
 
                         htmlContent += `
@@ -356,12 +347,14 @@
                 container.innerHTML = cacheSitiHtml;
 
             } catch (err) {
-                container.innerHTML = `
+                // Fallback istantaneo sicuro e pulito se il browser blocca la lettura diretta
+                cacheSitiHtml = `
                     <div class="result-card">
-                        <a href="https://duckduckgo.com/?q=${encodeURIComponent(query)}" target="_blank">Apri i risultati completi per "${query}" ↗</a>
-                        <p>Clicca per visualizzare la ricerca approfondita nel browser.</p>
+                        <a href="https://html.duckduckgo.com/html/?q=${encodeURIComponent(query)}" target="_blank">Apri i risultati per "${query}" su DuckDuckGo ↗</a>
+                        <p>Clicca per aprire la pagina di ricerca dedicata in modo super rapido.</p>
                     </div>
                 `;
+                container.innerHTML = cacheSitiHtml;
             }
         }
 
@@ -377,17 +370,16 @@
             document.getElementById("btnWeb").classList.remove("active");
 
             const container = document.getElementById("resultsList");
-            container.innerHTML = "<p style='color: #9ca3af;'>Caricamento foto reali in corso...</p>";
+            container.innerHTML = "<p style='color: #9ca3af;'>Caricamento foto in corso...</p>";
 
             try {
-                // Interroghiamo Wikimedia Commons per immagini mirate e di alta qualità
-                const wikiUrl = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(ultimaQuery)}&gsrnamespace=6&gsrlimit=20&prop=imageinfo&iiprop=url&format=json&origin=*`;
+                const wikiUrl = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(ultimaQuery)}&gsrnamespace=6&gsrlimit=15&prop=imageinfo&iiprop=url&format=json&origin=*`;
                 
                 const response = await fetch(wikiUrl);
                 const data = await response.json();
 
                 let gridHtml = `
-                    <div style="margin-bottom: 8px; color: #9ca3af; font-size: 0.85rem;">Foto reali per: <b>${ultimaQuery}</b></div>
+                    <div style="margin-bottom: 8px; color: #9ca3af; font-size: 0.85rem;">Foto per: <b>${ultimaQuery}</b></div>
                     <div class="image-grid">
                 `;
 
@@ -414,22 +406,21 @@
                 gridHtml += `</div>`;
 
                 if (!trovate) {
-                    container.innerHTML = "<p style='color: #9ca3af;'>Nessuna immagine trovata per questa ricerca.</p>";
+                    container.innerHTML = "<p style='color: #9ca3af;'>Nessuna immagine trovata.</p>";
                 } else {
                     container.innerHTML = gridHtml;
                 }
 
             } catch (err) {
-                container.innerHTML = "<p style='color: #ef4444;'>Errore durante il recupero delle immagini.</p>";
+                container.innerHTML = "<p style='color: #ef4444;'>Errore durante il caricamento delle immagini.</p>";
             }
         }
 
-        // Gestione Cronologia con localStorage
         function salvaCronologia(query) {
             let cronologia = JSON.parse(localStorage.getItem("omnia_history")) || [];
             cronologia = cronologia.filter(item => item.toLowerCase() !== query.toLowerCase());
             cronologia.unshift(query);
-            if (cronologia.length > 8) cronologia.pop(); // Mantieni le ultime 8
+            if (cronologia.length > 8) cronologia.pop();
             localStorage.setItem("omnia_history", JSON.stringify(cronologia));
             aggiornaCronologiaUI();
         }
