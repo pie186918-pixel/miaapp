@@ -527,25 +527,43 @@
             aggiornaCronologiaUI();
         }
 
-        function aggiornaCronologiaUI() {
-            const bar = document.getElementById("historyBar");
-            const cronologia = JSON.parse(localStorage.getItem("omnia_history")) || [];
-            
-            if (cronologia.length === 0) {
-                bar.style.display = "none";
-                return;
-            }
+// Funzione per mostrare la cronologia e il tasto "Cancella"
+function aggiornaCronologiaUI() {
+    const bar = document.getElementById("historyBar");
+    const cronologia = JSON.parse(localStorage.getItem("omnia_history")) || [];
+    
+    if (cronologia.length === 0) {
+        bar.style.display = "none";
+        return;
+    }
 
-            bar.style.display = "flex";
-            bar.innerHTML = "";
-            cronologia.forEach(item => {
-                const chip = document.createElement("div");
-                chip.className = "history-chip";
-                chip.innerText = item;
-                chip.onclick = () => avviaRicerca(item);
-                bar.appendChild(chip);
-            });
-        }
+    bar.style.display = "flex";
+    bar.style.alignItems = "center";
+    bar.innerHTML = "";
+
+    // Aggiungi le singole ricerche recenti
+    cronologia.forEach(item => {
+        const chip = document.createElement("div");
+        chip.className = "history-chip";
+        chip.innerText = item;
+        chip.onclick = () => avviaRicerca(item);
+        bar.appendChild(chip);
+    });
+
+    // Aggiungi il tasto per cancellare tutta la cronologia
+    const clearBtn = document.createElement("button");
+    clearBtn.style.cssText = "background: none; border: none; color: #ef4444; font-size: 0.75rem; cursor: pointer; margin-left: 6px; padding: 2px 6px;";
+    clearBtn.innerHTML = "🗑️ Cancella";
+    clearBtn.title = "Svuota la cronologia delle ricerche";
+    clearBtn.onclick = svuotaCronologia;
+    bar.appendChild(clearBtn);
+}
+
+// Funzione per svuotare completamente la cronologia dal browser
+function svuotaCronologia() {
+    localStorage.removeItem("omnia_history");
+    aggiornaCronologiaUI();
+}
     </script>
 </body>
 </html>
