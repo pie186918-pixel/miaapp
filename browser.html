@@ -39,6 +39,7 @@
             overflow: hidden;
             padding: 15px;
             position: relative;
+            height: 100%;
         }
 
         .pane-title {
@@ -87,7 +88,7 @@
             background: #0369a1;
         }
 
-        /* Pulsante IA speciale accanto a Cerca */
+        /* Pulsante IA accanto a Cerca */
         .ia-open-btn {
             background: #8b5cf6;
             color: white;
@@ -156,7 +157,7 @@
             border-color: #0284c7;
         }
 
-        /* Contenitore Risultati */
+        /* Contenitore Risultati - Occupa tutto lo spazio rimanente */
         .results-container {
             flex: 1;
             overflow-y: auto;
@@ -165,6 +166,7 @@
             gap: 12px;
             padding-right: 5px;
             position: relative;
+            height: 100%;
         }
 
         .result-card {
@@ -193,11 +195,12 @@
             line-height: 1.4;
         }
 
-        /* Mini-Browser Interno */
+        /* Mini-Browser Interno - Espanso a tutto schermo nel pannello */
         #internalBrowserWrapper {
             display: none;
             flex-direction: column;
             flex: 1;
+            width: 100%;
             height: 100%;
         }
 
@@ -238,6 +241,7 @@
         .internal-iframe {
             flex: 1;
             width: 100%;
+            height: 100%;
             border: none;
             background: white;
             border-radius: 0 0 8px 8px;
@@ -276,7 +280,7 @@
             text-overflow: ellipsis;
         }
 
-        /* Pane IA con supporto Sovrapposizione Schermo Intero */
+        /* Pane IA con Sovrapposizione Schermo Intero */
         .ia-pane {
             padding: 0;
             position: relative;
@@ -294,7 +298,6 @@
             border: none;
         }
 
-        /* Barra superiore IA per chiusura Fullscreen */
         .ia-fullscreen-bar {
             display: none;
             position: absolute;
@@ -340,7 +343,7 @@
 
     <div class="workspace">
         
-        <!-- COLONNA SINISTRA: BROWSER INTERNO -->
+        <!-- COLONNA SINISTRA: BROWSER INTERNO ESPANSO -->
         <div class="pane">
             <div class="pane-title">
                 <span>🌐 Omnia Browser</span>
@@ -349,7 +352,6 @@
             <div class="search-box" id="searchBoxArea">
                 <input type="text" id="searchInput" class="search-input" placeholder="Cerca argomento o sito..." onkeydown="if(event.key==='Enter') avviaRicerca(document.getElementById('searchInput').value)">
                 
-                <!-- Pulsante IA posizionato alla sinistra di CERCA -->
                 <button onclick="apriIAFullscreen()" class="ia-open-btn" title="Apri l'IA a Schermo Intero">🤖 IA</button>
                 <button onclick="avviaRicerca(document.getElementById('searchInput').value)" class="search-btn">Cerca</button>
             </div>
@@ -361,12 +363,12 @@
                 <button class="view-btn" id="btnFoto" onclick="mostraFoto()">🖼️ Foto Reali</button>
             </div>
 
-            <!-- CONTENITORE PRINCIPALE -->
+            <!-- CONTENITORE RISULTATI -->
             <div id="resultsList" class="results-container">
                 <p style="color: #6b7280; font-size: 0.9rem;">Digita una ricerca per visualizzare i risultati a schermo.</p>
             </div>
 
-            <!-- MINI-BROWSER INTERNO -->
+            <!-- MINI-BROWSER INTERNO A TUTTA ALTEZZA -->
             <div id="internalBrowserWrapper">
                 <div class="browser-toolbar">
                     <button class="back-btn" onclick="chiudiBrowserInterno()">← Torna ai risultati</button>
