@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Omnia - Workspace</title>
+    <title>Omnia - Browser Interno</title>
     <style>
         * {
             box-sizing: border-box;
@@ -84,7 +84,7 @@
             background: #0369a1;
         }
 
-        /* Cronologia Recente */
+        /* Cronologia */
         .history-bar {
             display: flex;
             gap: 6px;
@@ -134,7 +134,7 @@
             border-color: #0284c7;
         }
 
-        /* Contenitore Risultati */
+        /* Contenitore Risultati e Browser Interno */
         .results-container {
             flex: 1;
             overflow-y: auto;
@@ -142,6 +142,7 @@
             flex-direction: column;
             gap: 12px;
             padding-right: 5px;
+            position: relative;
         }
 
         .result-card {
@@ -149,24 +150,75 @@
             border: 1px solid #374151;
             padding: 12px 15px;
             border-radius: 10px;
+            cursor: pointer;
+            transition: border-color 0.2s;
         }
 
-        .result-card a {
+        .result-card:hover {
+            border-color: #38bdf8;
+        }
+
+        .result-card .site-title {
             color: #38bdf8;
-            text-decoration: none;
             font-size: 1rem;
             font-weight: bold;
-        }
-
-        .result-card a:hover {
-            text-decoration: underline;
+            margin-bottom: 4px;
         }
 
         .result-card p {
             color: #9ca3af;
             font-size: 0.88rem;
-            margin-top: 4px;
             line-height: 1.4;
+        }
+
+        /* Mini-Browser Interno (Iframe nascosto di default) */
+        #internalBrowserWrapper {
+            display: none;
+            flex-direction: column;
+            flex: 1;
+            height: 100%;
+        }
+
+        .browser-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #1f2937;
+            padding: 8px 12px;
+            border-radius: 8px 8px 0 0;
+            border-bottom: 1px solid #374151;
+        }
+
+        .back-btn {
+            background: #374151;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .back-btn:hover {
+            background: #4b5563;
+        }
+
+        .browser-url {
+            font-size: 0.8rem;
+            color: #9ca3af;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 250px;
+        }
+
+        .internal-iframe {
+            flex: 1;
+            width: 100%;
+            border: none;
+            background: white;
+            border-radius: 0 0 8px 8px;
         }
 
         /* Griglia Immagini */
@@ -183,7 +235,7 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            text-decoration: none;
+            cursor: pointer;
         }
 
         .image-card img {
@@ -221,13 +273,13 @@
 
     <div class="workspace">
         
-        <!-- COLONNA SINISTRA: BROWSER -->
+        <!-- COLONNA SINISTRA: BROWSER INTERNO -->
         <div class="pane">
             <div class="pane-title">
                 <span>🌐 Omnia Browser</span>
             </div>
             
-            <div class="search-box">
+            <div class="search-box" id="searchBoxArea">
                 <input type="text" id="searchInput" class="search-input" placeholder="Cerca argomento o sito..." onkeydown="if(event.key==='Enter') avviaRicerca(document.getElementById('searchInput').value)">
                 <button onclick="avviaRicerca(document.getElementById('searchInput').value)" class="search-btn">Cerca</button>
             </div>
@@ -239,8 +291,18 @@
                 <button class="view-btn" id="btnFoto" onclick="mostraFoto()">🖼️ Foto Reali</button>
             </div>
 
+            <!-- CONTENITORE PRINCIPALE (Risultati o Mini-Browser) -->
             <div id="resultsList" class="results-container">
-                <p style="color: #6b7280; font-size: 0.9rem;">Digita una ricerca per visualizzare i risultati diretti.</p>
+                <p style="color: #6b7280; font-size: 0.9rem;">Digita una ricerca per visualizzare i risultati a schermo.</p>
+            </div>
+
+            <!-- MINI-BROWSER INTERNO (Mostrato al click su un sito o foto) -->
+            <div id="internalBrowserWrapper">
+                <div class="browser-toolbar">
+                    <button class="back-btn" onclick="chiudiBrowserInterno()">← Torna ai risultati</button>
+                    <span class="browser-url" id="browserUrlText"></span>
+                </div>
+                <iframe id="internalIframe" class="internal-iframe" src=""></iframe>
             </div>
         </div>
 
@@ -264,6 +326,7 @@
             document.getElementById("searchInput").value = query;
             ultimaQuery = query;
             salvaCronologia(query);
+            chiudiBrowserInterno();
 
             const container = document.getElementById("resultsList");
             container.innerHTML = "<p style='color: #9ca3af;'>Ricerca in corso...</p>";
@@ -272,7 +335,6 @@
             document.getElementById("btnFoto").classList.remove("active");
 
             try {
-                // Utilizziamo un'API di ricerca enciclopedica e sul web aperta (senza limiti CORS)
                 const apiUrl = `https://it.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&utf8=&format=json&origin=*`;
                 
                 const response = await fetch(apiUrl);
@@ -283,12 +345,12 @@
                 if (data.query && data.query.search && data.query.search.length > 0) {
                     data.query.search.forEach(item => {
                         const title = item.title;
-                        const snippet = item.snippet.replace(/<\/?[^>]+(>|$)/g, ""); // Rimuove tag HTML
+                        const snippet = item.snippet.replace(/<\/?[^>]+(>|$)/g, "");
                         const pageUrl = `https://it.wikipedia.org/wiki/${encodeURIComponent(title)}`;
 
                         htmlContent += `
-                            <div class="result-card">
-                                <a href="${pageUrl}" target="_blank" rel="noopener noreferrer">${title}</a>
+                            <div class="result-card" onclick="apriNelBrowserInterno('${pageUrl}', '${title}')">
+                                <div class="site-title">${title}</div>
                                 <p>${snippet}...</p>
                             </div>
                         `;
@@ -305,6 +367,28 @@
             }
         }
 
+        function apriNelBrowserInterno(url, titolo) {
+            document.getElementById("resultsList").style.display = "none";
+            document.getElementById("viewSwitcher").style.display = "none";
+            document.getElementById("searchBoxArea").style.display = "none";
+            document.getElementById("historyBar").style.display = "none";
+            
+            const wrapper = document.getElementById("internalBrowserWrapper");
+            wrapper.style.display = "flex";
+            
+            document.getElementById("browserUrlText").innerText = titolo + " (" + url + ")";
+            document.getElementById("internalIframe").src = url;
+        }
+
+        function chiudiBrowserInterno() {
+            document.getElementById("internalBrowserWrapper").style.display = "none";
+            document.getElementById("internalIframe").src = "";
+            document.getElementById("resultsList").style.display = "flex";
+            document.getElementById("viewSwitcher").style.display = "flex";
+            document.getElementById("searchBoxArea").style.display = "flex";
+            aggiornaCronologiaUI();
+        }
+
         function mostraSitiWeb() {
             document.getElementById("btnWeb").classList.add("active");
             document.getElementById("btnFoto").classList.remove("active");
@@ -315,6 +399,7 @@
             if (!ultimaQuery) return;
             document.getElementById("btnFoto").classList.add("active");
             document.getElementById("btnWeb").classList.remove("active");
+            chiudiBrowserInterno();
 
             const container = document.getElementById("resultsList");
             container.innerHTML = "<p style='color: #9ca3af;'>Caricamento foto in corso...</p>";
@@ -341,10 +426,10 @@
                             let title = page.title.replace(/^File:/i, '').replace(/\.[^/.]+$/, "");
                             
                             gridHtml += `
-                                <a href="${imgUrl}" target="_blank" class="image-card">
+                                <div class="image-card" onclick="apriNelBrowserInterno('${imgUrl}', '${title}')">
                                     <img src="${imgUrl}" alt="${title}" loading="lazy">
                                     <span>${title}</span>
-                                </a>
+                                </div>
                             `;
                         }
                     }
@@ -353,7 +438,7 @@
                 gridHtml += `</div>`;
 
                 if (!trovate) {
-                    container.innerHTML = "<p style='color: #9ca3af;'>Nessuna immagine trovata per questo termine.</p>";
+                    container.innerHTML = "<p style='color: #9ca3af;'>Nessuna immagine trovata.</p>";
                 } else {
                     container.innerHTML = gridHtml;
                 }
