@@ -217,7 +217,7 @@
     <div id="alarm-modal" class="modal-overlay">
         <div class="modal-box">
             <h3>TEMPO SCADUTO!</h3>
-            <p>Il timer è teminato.</p>
+            <p>Il timer è terminato.</p>
             <button type="button" class="btn-modal-ok" onclick="closeAlarm()">OK / FERMA ALLARME</button>
         </div>
     </div>
@@ -233,49 +233,23 @@
         updateClock();
         setInterval(updateClock, 10000); 
 
-        // --- ALLARME CON BEEP CONTINUI ---
-        let audioCtx = null;
-        let alarmInterval = null;
+        // --- ALLARME CON FILE AUDIO PERSONALE ---
+        // Sostituisci 'suoneria.mp3' con il nome del tuo file audio
+        const alarmAudio = new Audio('suoneria.mp3'); 
+        alarmAudio.loop = true; // Ripete la suoneria in loop
 
         function startAlarm() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-
-            function playSingleBeep() {
-                try {
-                    const oscillator = audioCtx.createOscillator();
-                    const gainNode = audioCtx.createGain();
-                    
-                    oscillator.type = 'sine'; // Suono rotondo e morbido
-                    oscillator.frequency.setValueAtTime(587.33, audioCtx.currentTime); // Nota Re
-                    
-                    gainNode.gain.setValueAtTime(0.4, audioCtx.currentTime);
-                    
-                    oscillator.connect(gainNode);
-                    gainNode.connect(audioCtx.destination);
-                    
-                    oscillator.start();
-                    oscillator.stop(audioCtx.currentTime + 0.3); // Leggermente più lungo
-                } catch (e) {
-                    console.log(e);
-                }
-            }
-
             document.getElementById('alarm-modal').style.display = 'flex';
-
-            playSingleBeep();
-            alarmInterval = setInterval(playSingleBeep, 350);
+            
+            alarmAudio.currentTime = 0;
+            alarmAudio.play().catch(e => {
+                console.log("Riproduzione audio bloccata dal browser o file non trovato:", e);
+            });
         }
 
         function closeAlarm() {
-            if (alarmInterval) {
-                clearInterval(alarmInterval);
-                alarmInterval = null;
-            }
+            alarmAudio.pause();
+            alarmAudio.currentTime = 0;
             document.getElementById('alarm-modal').style.display = 'none';
         }
 
@@ -324,10 +298,6 @@
         function startTimer() {
             if (totalSeconds <= 0) return;
             closeAlarm();
-            
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
 
             isRunning = true;
             let btn = document.getElementById('btn-toggle');
