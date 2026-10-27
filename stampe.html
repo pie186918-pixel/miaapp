@@ -32,7 +32,6 @@
             margin-bottom: 20px;
         }
 
-        /* TITOLO GRANDE */
         h1 {
             font-size: clamp(2.5rem, 6vw, 4rem);
             font-weight: 800;
@@ -42,7 +41,6 @@
             letter-spacing: 1px;
         }
 
-        /* MENU DI NAVIGAZIONE CATEGORIE */
         .category-menu {
             display: flex;
             gap: 12px;
@@ -67,11 +65,13 @@
             border-color: #0284c7;
         }
 
-        /* SEZIONE CATEGORIA E GRIGLIA STAMPE */
         .category-section {
             width: 100%;
             max-width: 1000px;
             margin-bottom: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .category-title {
@@ -80,15 +80,19 @@
             margin-bottom: 20px;
             border-bottom: 2px solid #1f2937;
             padding-bottom: 8px;
+            width: 100%;
+            text-align: center;
         }
 
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 20px;
+            width: 100%;
+            justify-content: center;
+            justify-items: center;
         }
 
-        /* CARD SINGOLA STAMPA */
         .print-card {
             background: #111827;
             border: 1px solid #1f2937;
@@ -98,19 +102,18 @@
             flex-direction: column;
             box-shadow: 0 10px 25px rgba(0,0,0,0.5);
             transition: transform 0.2s;
+            width: 100%;
+            max-width: 320px;
         }
 
         .print-card:hover {
             transform: translateY(-4px);
         }
 
-.print-card img {
+        .print-card img {
             width: 100%;
-            height: 220px;
-            object-fit: contain;      /* Mantiene le proporzioni e centra l'immagine senza tagliarla */
-            object-position: center;  /* Centra l'immagine sia in orizzontale che in verticale */
-            background-color: #0b0f17; /* Sfondo scuro per riempire eventuali bordi vuoti */
-            padding: 10px;            /* Un minimo di margine per non far toccare i bordi */
+            height: 200px;
+            object-fit: cover;
             cursor: pointer;
             border-bottom: 1px solid #1f2937;
         }
@@ -145,43 +148,30 @@
 
     <a href="menu.html" class="back-btn">← Torna al Menu</a>
 
-    <!-- TITOLO PRINCIPALE -->
     <h1>STAMPE 3D</h1>
 
-    <!-- MENU DI NAVIGAZIONE RAPIDA -->
     <div class="category-menu">
-        <!-- 📌 DUPLICA QUESTO BLOCCO PER AGGIUNGERE UN NUOVO BOTTONE CATEGORIA -->
         <a href="#natale" class="cat-btn">Natale</a>
         <a href="#utilita" class="cat-btn">Utilità</a>
-        <!-- ================================================================= -->
     </div>
 
-    <!-- SEZIONE NATALE -->
     <div id="natale" class="category-section">
         <h2 class="category-title">Natale</h2>
         <div class="grid">
-            
-            <!-- 📌 DUPLICA QUESTO BLOCCO (DALL'APERTURA ALLA CHIUSURA DI print-card) PER AGGIUNGERE UNA NUOVA STAMPA -->
             <div class="print-card">
-                <!-- IMMAGINE: Doppio click qui avvia il download del file .stl specificato in 'data-stl' -->
                 <img src="foto.png" alt="Pallina di Natale" data-stl="file-natale.stl" ondblclick="downloadStl(this)">
                 <div class="print-info">
                     <div class="print-title">Pallina di Natale</div>
-                    <div class="print-print-desc print-desc">Decorazione classica per l'albero.</div>
+                    <div class="print-desc">Decorazione classica per l'albero.</div>
                     <div class="hint">💡 Doppio click sull'immagine per scaricare l'STL</div>
                 </div>
             </div>
-            <!-- ================================================================================================= -->
-
         </div>
     </div>
 
-    <!-- SEZIONE UTILITÀ -->
     <div id="utilita" class="category-section">
         <h2 class="category-title">Utilità</h2>
         <div class="grid">
-            
-            <!-- 📌 DUPLICA QUESTO BLOCCO PER AGGIUNGERE ALTRA UTILITÀ -->
             <div class="print-card">
                 <img src="foto.png" alt="Supporto Telefono" data-stl="supporto.stl" ondblclick="downloadStl(this)">
                 <div class="print-info">
@@ -190,18 +180,15 @@
                     <div class="hint">💡 Doppio click sull'immagine per scaricare l'STL</div>
                 </div>
             </div>
-            <!-- ================================================================= -->
-
         </div>
     </div>
 
-    <!-- SCRIPT JAVASCRIPT PER GESTIRE IL DOWNLOAD AL DOPPIO CLICK -->
     <script>
         function downloadStl(imgElement) {
             const stlFile = imgElement.getAttribute('data-stl');
             const link = document.createElement('a');
             link.href = stlFile;
-            link.download = stlFile; // Forza il download del file
+            link.download = stlFile;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
