@@ -84,13 +84,13 @@
             text-align: center;
         }
 
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+         .grid {
+            display: flex;
+            flex-wrap: wrap;
             gap: 20px;
-            width: 100%;
             justify-content: center;
-            justify-items: center;
+            width: 100%;
+            max-width: 900px;
         }
 
         .print-card {
